@@ -4,7 +4,7 @@
 #include <time.h>
 
 enum TRaza{Orco, Humano, Mago, Enano, Elfo};
-char Nombres[6][10]={"jorgito", "b", "c", "d", "e", "olaf"};
+char Nombres[6][10]={"jorgito", "b", "c", "d", "e", "Olaf"};
 char Apellidos[6][10]={"f", "g", "hormiga", "i", "j"};
 
 typedef struct TDatos {
@@ -30,14 +30,22 @@ typedef struct TPersonaje {
 TDatos cargaDatos ();
 void mostrarDatos (TDatos datos);
 
+void Cargar_Carac(TCaracteristicas *puntero);
+void Mostrar_Carac(TCaracteristicas *puntero);
+
 int main (void) {
 	TDatos pj;
-
+	TCaracteristicas *puntero;
 	srand(time(NULL));
 
 	pj = cargaDatos();
 
 	mostrarDatos(pj);
+
+
+	puntero = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
+	Cargar_Carac(puntero);
+	Mostrar_Carac(puntero);
 
 	return 0;
 }
@@ -114,4 +122,21 @@ switch(datos.Raza) {
 	printf("Edad: %d\n", datos.edad);
 	printf("Salud: %.2lf\n", datos.Salud);
 	return;
+}
+
+
+
+void Cargar_Carac(TCaracteristicas *puntero){
+	puntero->velocidad = 1+rand()%(11-1);
+	puntero->destreza = 1+rand()%(6-1);
+	puntero->fuerza = 1+rand()%(11-1);
+	puntero->Nivel = 1+rand()%(11-1);
+	puntero->Armadura = 1+rand()%(11-1);
+}
+void Mostrar_Carac(TCaracteristicas *puntero){
+	printf("Velocidad: %d\n", puntero->velocidad );
+	printf("Destreza: %d\n", puntero->destreza);
+	printf("Fuerza: %d\n", puntero->fuerza);
+	printf("Nivel: %d\n", puntero->Nivel);
+	printf("Armadura: %d\n", puntero->Armadura);
 }
