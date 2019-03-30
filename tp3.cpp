@@ -29,19 +29,19 @@ typedef struct TPersonaje {
 
 TDatos cargaDatos ();
 void mostrarDatos (TDatos datos);
-
+//
 void Cargar_Carac(TCaracteristicas *puntero);
 void Mostrar_Carac(TCaracteristicas *puntero);
 
 int main (void) {
 	TDatos pj;
 	TCaracteristicas *puntero;
+	TPersonaje Arre[6];
 	srand(time(NULL));
 
 	pj = cargaDatos();
 
 	mostrarDatos(pj);
-
 
 	puntero = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
 	Cargar_Carac(puntero);
@@ -50,8 +50,8 @@ int main (void) {
 	return 0;
 }
 
+//Cargar Datos
 TDatos cargaDatos () {
-
 	TDatos datos;
 	enum TRaza raza;
 
@@ -89,10 +89,8 @@ TDatos cargaDatos () {
 	return datos;
 }
 
-
+//Mostrar Datos
 void mostrarDatos (TDatos datos) {
-
-
 printf("Raza: ");
 
 switch(datos.Raza) {
@@ -113,19 +111,13 @@ switch(datos.Raza) {
 			break;
 
 		default: printf("%s\n", "Humano");
-	}
-
-
-
-	
+	}	
 	printf("Nombre: %s\n", datos.ApellidoNombre);
 	printf("Edad: %d\n", datos.edad);
 	printf("Salud: %.2lf\n", datos.Salud);
 	return;
 }
-
-
-
+//Cargar Caracteristicas
 void Cargar_Carac(TCaracteristicas *puntero){
 	puntero->velocidad = 1+rand()%(11-1);
 	puntero->destreza = 1+rand()%(6-1);
@@ -133,6 +125,7 @@ void Cargar_Carac(TCaracteristicas *puntero){
 	puntero->Nivel = 1+rand()%(11-1);
 	puntero->Armadura = 1+rand()%(11-1);
 }
+//Mostrar Caracteristicas
 void Mostrar_Carac(TCaracteristicas *puntero){
 	printf("Velocidad: %d\n", puntero->velocidad );
 	printf("Destreza: %d\n", puntero->destreza);
