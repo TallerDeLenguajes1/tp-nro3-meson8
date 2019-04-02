@@ -4,8 +4,8 @@
 #include <time.h>
 
 enum TRaza{Orco, Humano, Mago, Enano, Elfo};
-char Nombres[6][10]={"jorgito", "b", "c", "d", "e", "Olaf"};
-char Apellidos[6][10]={"f", "g", "hormiga", "i", "j"};
+char Nombres[6][10]={"Jorgito", "Borimir", "Conan", "Druid", "Elvish", "Olaf"};
+char Apellidos[6][10]={"Jubilus", "Gomez", "Heckles", "Imir", "Juniper"};
 
 typedef struct TDatos {
 	TRaza Raza; //nota 1
@@ -29,24 +29,30 @@ typedef struct TPersonaje {
 
 TDatos cargaDatos ();
 void mostrarDatos (TDatos datos);
-
-void Cargar_Carac(TCaracteristicas *puntero);
-void Mostrar_Carac(TCaracteristicas *puntero);
+TCaracteristicas cargarCarac();
+//void Cargar_Carac(TCaracteristicas *puntero);
+//void Mostrar_Carac(TCaracteristicas *puntero);
+//void pelea(TPersonaje  datos1, TPersonaje  Datos2);
+void Mostrar_Carac(TCaracteristicas carac);
 
 int main (void) {
-	TDatos pj;
-	TCaracteristicas *puntero;
+	TDatos pj1;
+	TDatos pj2;
+	TCaracteristicas carac1;
 	srand(time(NULL));
 
-	pj = cargaDatos();
-
-	mostrarDatos(pj);
-
-
-	puntero = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
-	Cargar_Carac(puntero);
-	Mostrar_Carac(puntero);
-
+	pj1 = cargaDatos();
+	pj2 = cargaDatos();
+	mostrarDatos(pj1);
+	mostrarDatos(pj2);
+	
+	//puntero = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
+	//Cargar_Carac(puntero);
+	carac1 = cargarCarac();	
+	//Mostrar_Carac(puntero);
+	//mostrarDatos(pj2);
+	Mostrar_Carac(carac1);
+	//pelea(pj1, pj2);
 	return 0;
 }
 
@@ -92,9 +98,7 @@ TDatos cargaDatos () {
 
 void mostrarDatos (TDatos datos) {
 
-
 printf("Raza: ");
-
 switch(datos.Raza) {
 		case 0: 
 			printf("%s\n", "Orco");
@@ -113,19 +117,29 @@ switch(datos.Raza) {
 			break;
 
 		default: printf("%s\n", "Humano");
-	}
-
-
-
-	
+	}	
 	printf("Nombre: %s\n", datos.ApellidoNombre);
 	printf("Edad: %d\n", datos.edad);
 	printf("Salud: %.2lf\n", datos.Salud);
 	return;
 }
-
-
-
+TCaracteristicas cargarCarac(){
+	TCaracteristicas Carac;
+	Carac.velocidad = 1+rand()%(11-1);
+	Carac.destreza = 1+rand()%(6-1);
+	Carac.fuerza = 1+rand()%(11-1);
+	Carac.Nivel = 1+rand()%(11-1);
+	Carac.Armadura = 1+rand()%(11-1);	
+	return Carac;	
+}
+void Mostrar_Carac(TCaracteristicas carac){
+	printf("Velocidad: %d\n", carac.velocidad );
+	printf("Destreza: %d\n", carac.destreza);
+	printf("Fuerza: %d\n", carac.fuerza);
+	printf("Nivel: %d\n", carac.Nivel);
+	printf("Armadura: %d\n", carac.Armadura);
+}
+/*
 void Cargar_Carac(TCaracteristicas *puntero){
 	puntero->velocidad = 1+rand()%(11-1);
 	puntero->destreza = 1+rand()%(6-1);
@@ -139,4 +153,73 @@ void Mostrar_Carac(TCaracteristicas *puntero){
 	printf("Fuerza: %d\n", puntero->fuerza);
 	printf("Nivel: %d\n", puntero->Nivel);
 	printf("Armadura: %d\n", puntero->Armadura);
+}*/
+/*
+void pelea(TPersonaje  datos1, TPersonaje  Datos2){
+		
+		int i;
+		int MDP=50000;
+		for(i=0; i<3; i++){
+			double PD1=datos1.destreza * datos1.fuerza * datos1.Nivel;
+			double VA1= PD1*ED1;
+			double PDEF1= datos1.Armadura*datos1.velocidad;
+			double ED1= rand()%100;
+			double DP1=(((VA1*ED1)-PDEF1)/MDP)*100;
+			
+			double PDEF2= Datos2.Armadura*Datos2.velocidad;
+			double PD2=Datos2.destreza * Datos2.fuerza * Datos2.Nivel;	
+			double ED2= rand()%100;
+			double VA2= PD2*ED2;
+			double DP2=(((VA2*ED2)-PDEF2)/MDP)*100;
+			
+			if(DP1<MPD){
+				datos1->Salud= datos1->Salud - DP2;	
+				printf("La vida de %s es de %lf\n", TPersonaje.dato1, datos1->Salud);	
+			}
+			else{
+				printf("El ataque de %s falló\n", TPersonaje.dato1);
+			}
+			if(DP2<MPD){
+				Datos2->Salud= Datos2->Salud - DP1;
+				printf("La vida de %s es de %lf", TPersonaje.dato1, datos1->Salud);
+			}
+			else{
+				printf("El ataque de %s falló\n", TPersonaje.Dato2);
+				
+			}		
+		}
+	if(Datos2->Salud <datos1->Salud){
+		printf("El ganador es %s\n!", TPersonaje.ApellidoNombre);
+		
+	}
+	if(datos1->Salud < Datos2->Salud){
+		printf("El ganador es %s\n!", TPersonaje.ApellidoNombre);
+		
+	}
+	else{
+		printf("Es un empate!");
+	}
+	
 }
+*/
+/*
+
+void peleadores(){
+	int i,peleadores;
+	printf("Ingrese la cantidad de peleadores:");
+	scanf("%d", &peleadores);
+	struct arre[peladores];
+	for(i=0; i<peleadores; i++0){
+		
+		
+	}
+	
+	
+	
+}*/
+
+
+
+
+
+
