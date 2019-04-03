@@ -33,7 +33,8 @@ void mostrarDatos (TDatos *datos);
 TCaracteristicas *  Cargar_Carac(void);
 void Mostrar_Carac(TCaracteristicas *carac);
 
-
+TPersonaje cargaPJ (void);
+void muestraPJ (TPersonaje pj);
 
 // ___________________________________________________
 //                      MAIN
@@ -41,13 +42,33 @@ void Mostrar_Carac(TCaracteristicas *carac);
 
 int main (void) {
 	TPersonaje pj;
+	TPersonaje *arrayPJ;
+	int i;
+	int cantPJs;
 
 	srand(time(NULL));
 
-	pj.DatosPersonales =cargaDatos();
-	mostrarDatos(pj.DatosPersonales);
-	pj.Caracteristicas = Cargar_Carac();
-	Mostrar_Carac(pj.Caracteristicas);
+	printf("Escriba la cantidad de personajes:\n");
+	scanf("%d", &cantPJs);
+
+	if (cantPJs <0) {
+		cantPJs *= -1; 
+	}
+
+	arrayPJ = (TPersonaje *) malloc (sizeof(TPersonaje)* cantPJs);
+
+	for (i=0; i<cantPJs; i++) {
+		arrayPJ[i] = cargaPJ();
+	}
+
+
+
+	printf("\nEstos son los datos y caracteristicas de los %d personajes:\n", cantPJs);
+	for (i=0; i<cantPJs; i++) {
+		printf("#%d\n", (i+1));
+		muestraPJ(arrayPJ[i]);
+		printf("\n");
+	}
 
 	return 0;
 }
@@ -146,4 +167,20 @@ void Mostrar_Carac(TCaracteristicas *carac){
 	printf("Fuerza: %d\n", carac->fuerza);
 	printf("Nivel: %d\n", carac->Nivel);
 	printf("Armadura: %d\n", carac->Armadura);
+}
+
+
+TPersonaje cargaPJ (void) {
+	TPersonaje pj;
+
+	pj.DatosPersonales =cargaDatos();
+	pj.Caracteristicas = Cargar_Carac();
+
+	return pj;
+}
+
+void muestraPJ (TPersonaje pj) {
+	mostrarDatos(pj.DatosPersonales);
+	Mostrar_Carac(pj.Caracteristicas);
+	return;
 }
