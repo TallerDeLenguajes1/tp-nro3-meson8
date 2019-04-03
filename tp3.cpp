@@ -26,7 +26,12 @@ typedef struct TPersonaje {
 	TDatos * DatosPersonales;
 	TCaracteristicas * Caracteristicas;
 } TPersonaje;
-
+/*
+struct TPersonaje {
+	TDatos * DatosPersonales;
+	TCaracteristicas * Caracteristicas;
+} Personajes[2];
+*/
 TDatos cargaDatos ();
 void mostrarDatos (TDatos datos);
 TCaracteristicas cargarCarac();
@@ -45,13 +50,19 @@ int main (void) {
 	pj2 = cargaDatos();
 	mostrarDatos(pj1);
 	mostrarDatos(pj2);
-	
 	//puntero = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
 	//Cargar_Carac(puntero);
 	carac1 = cargarCarac();	
 	//Mostrar_Carac(puntero);
 	//mostrarDatos(pj2);
 	Mostrar_Carac(carac1);
+	TPersonaje protagonista;
+	
+
+		//cin.getline(Personajes[i].Caracteristicas);
+		
+		
+	
 	//pelea(pj1, pj2);
 	return 0;
 }
