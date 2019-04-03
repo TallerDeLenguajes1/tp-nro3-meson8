@@ -27,34 +27,43 @@ typedef struct TPersonaje {
 	TCaracteristicas * Caracteristicas;
 } TPersonaje;
 
-TDatos cargaDatos ();
-void mostrarDatos (TDatos datos);
+TDatos * cargaDatos (void);
+void mostrarDatos (TDatos *datos);
 
-void Cargar_Carac(TCaracteristicas *puntero);
-void Mostrar_Carac(TCaracteristicas *puntero);
+TCaracteristicas *  Cargar_Carac(void);
+void Mostrar_Carac(TCaracteristicas *carac);
+
+
+
+// ___________________________________________________
+//                      MAIN
+// ___________________________________________________
 
 int main (void) {
-	TDatos pj;
-	TCaracteristicas *puntero;
+	TPersonaje pj;
+
 	srand(time(NULL));
 
-	pj = cargaDatos();
-
-	mostrarDatos(pj);
-
-
-	puntero = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
-	Cargar_Carac(puntero);
-	Mostrar_Carac(puntero);
+	pj.DatosPersonales =cargaDatos();
+	mostrarDatos(pj.DatosPersonales);
+	pj.Caracteristicas = Cargar_Carac();
+	Mostrar_Carac(pj.Caracteristicas);
 
 	return 0;
 }
 
-TDatos cargaDatos () {
 
-	TDatos datos;
+// ___________________________________________________
+//                   DEFINICIONES
+// ___________________________________________________
+
+TDatos* cargaDatos (void) {
+	TDatos *datos;
 	enum TRaza raza;
 
+	datos = (TDatos*) malloc (sizeof(TDatos));
+
+	//Determinar Raza
 	switch(rand()%5) {
 		case 0: 
 			raza = Orco;
@@ -74,28 +83,23 @@ TDatos cargaDatos () {
 
 		default: Humano;
 	}
-
-	datos.Raza = raza;
-
-	datos.ApellidoNombre = (char *) malloc (10);
-
-	strcpy((datos.ApellidoNombre), Nombres[rand()%6]);
-
-	datos.edad = rand()%300;
-
-	datos.Salud = (double)100;
+	datos->Raza = raza;
 
 
+	datos->ApellidoNombre = (char *) malloc (10);
+
+	strcpy((datos->ApellidoNombre), Nombres[rand()%6]);
+
+	datos->edad = rand()%300;
+
+	datos->Salud = (double)100;
 	return datos;
 }
 
-
-void mostrarDatos (TDatos datos) {
-
+void mostrarDatos (TDatos *datos) {
 
 printf("Raza: ");
-
-switch(datos.Raza) {
+switch(datos->Raza) {
 		case 0: 
 			printf("%s\n", "Orco");
 			break;
@@ -115,28 +119,31 @@ switch(datos.Raza) {
 		default: printf("%s\n", "Humano");
 	}
 
-
-
-	
-	printf("Nombre: %s\n", datos.ApellidoNombre);
-	printf("Edad: %d\n", datos.edad);
-	printf("Salud: %.2lf\n", datos.Salud);
+	printf("Nombre: %s\n", datos->ApellidoNombre);
+	printf("Edad: %d\n", datos->edad);
+	printf("Salud: %.2lf\n", datos->Salud);
 	return;
 }
 
 
 
-void Cargar_Carac(TCaracteristicas *puntero){
-	puntero->velocidad = 1+rand()%(11-1);
-	puntero->destreza = 1+rand()%(6-1);
-	puntero->fuerza = 1+rand()%(11-1);
-	puntero->Nivel = 1+rand()%(11-1);
-	puntero->Armadura = 1+rand()%(11-1);
+TCaracteristicas* Cargar_Carac(void){
+	TCaracteristicas *carac; 
+
+	carac = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
+
+	carac->velocidad = 1+rand()%(11-1);
+	carac->destreza = 1+rand()%(6-1);
+	carac->fuerza = 1+rand()%(11-1);
+	carac->Nivel = 1+rand()%(11-1);
+	carac->Armadura = 1+rand()%(11-1);
+
+	return carac;
 }
-void Mostrar_Carac(TCaracteristicas *puntero){
-	printf("Velocidad: %d\n", puntero->velocidad );
-	printf("Destreza: %d\n", puntero->destreza);
-	printf("Fuerza: %d\n", puntero->fuerza);
-	printf("Nivel: %d\n", puntero->Nivel);
-	printf("Armadura: %d\n", puntero->Armadura);
+void Mostrar_Carac(TCaracteristicas *carac){
+	printf("Velocidad: %d\n", carac->velocidad );
+	printf("Destreza: %d\n", carac->destreza);
+	printf("Fuerza: %d\n", carac->fuerza);
+	printf("Nivel: %d\n", carac->Nivel);
+	printf("Armadura: %d\n", carac->Armadura);
 }
