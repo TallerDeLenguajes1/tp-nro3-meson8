@@ -231,7 +231,7 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 
 		   //Defensa del segundo personaje
 		   poder_defensa2 = (Puntero_Personajes[per_2].Caracteristicas->Armadura * Puntero_Personajes[per_2].Caracteristicas->velocidad);
-		   danio2 = ((valor_ataq1 * efec_disparo1 - poder_defensa2)% Max_danio)*100;
+		   danio2 = ((valor_ataq1 * efec_disparo1 - poder_defensa2)/Max_danio)*100;
 		   salud2 = salud2 - danio2 ;
 
 		   printf("--Ataque: %s\n",Puntero_Personajes[per_1].DatosPersonales->ApellidoNombre);
@@ -258,7 +258,7 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 
 		   //Defensa del primer personaje
 		   poder_defensa1 = (Puntero_Personajes[per_1].Caracteristicas->Armadura * Puntero_Personajes[per_1].Caracteristicas->velocidad);
-		   danio1 = ((valor_ataq2 * efec_disparo2 - poder_defensa1)% Max_danio)*100;
+		   danio1 = ((valor_ataq2 * efec_disparo2 - poder_defensa1)/Max_danio)*100;
 		   salud1 = salud1 - danio1;
 
 		   printf("--Ataque: %s\n",Puntero_Personajes[per_2].DatosPersonales->ApellidoNombre);
