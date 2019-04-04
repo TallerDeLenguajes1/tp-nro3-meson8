@@ -5,7 +5,7 @@
 
 enum TRaza{Orco, Humano, Mago, Enano, Elfo};
 char Nombres[6][10]={"jorgito", "b", "c", "d", "e", "Olaf"};
-char Apellidos[6][10]={"f", "g", "hormiga", "i", "j"};
+char Apellidos[6][10]={"f", "g", "hormiga", "i", "j", "PP"};
 
 typedef struct TDatos {
 	TRaza Raza; //nota 1
@@ -53,7 +53,7 @@ int main (void) {
 //Cargar Personajes
 void Cargar_N_per(TPersonaje *Puntero_Personajes){
 	enum TRaza raza;
-	for (int i = 0; i < sizeof(TPersonaje); ++i){
+	for (int i = 0; i < 6; i++){
 		Puntero_Personajes[i].DatosPersonales = (TDatos *)malloc(sizeof(TDatos));
 	    Puntero_Personajes[i].Caracteristicas = (TCaracteristicas *)malloc(sizeof(TCaracteristicas));
 	    //Datos Personales
@@ -78,11 +78,12 @@ void Cargar_N_per(TPersonaje *Puntero_Personajes){
 	    }
 
 	    Puntero_Personajes[i].DatosPersonales->Raza = raza;
-	    Puntero_Personajes[i].DatosPersonales->ApellidoNombre = (char *) malloc (10);
-	    strcpy((Puntero_Personajes[i].DatosPersonales->ApellidoNombre), Nombres[rand()%6]);
+	    
+	   
 	    Puntero_Personajes[i].DatosPersonales->edad = rand()%300;
 	    Puntero_Personajes[i].DatosPersonales->Salud = (double)100;
-
+ 		Puntero_Personajes[i].DatosPersonales->ApellidoNombre = (char *) malloc (10);
+ 		strcpy((Puntero_Personajes[i].DatosPersonales->ApellidoNombre), Nombres[rand()%6]);
 		//Caracteristicas
 		Puntero_Personajes[i].Caracteristicas->velocidad = 1+rand()%(11-1);
 		Puntero_Personajes[i].Caracteristicas->destreza = 1+rand()%(6-1);
@@ -120,6 +121,7 @@ void Mostrar_N_per(TPersonaje *Puntero_Personajes){
 		    default: printf("Raza: %s\n", "Humano");
 	    }
 	    printf("Nombre: %s\n", Puntero_Personajes[i].DatosPersonales->ApellidoNombre);
+	    fflush(stdin);
 	    printf("Edad: %d\n", Puntero_Personajes[i].DatosPersonales->edad);
 	    printf("Salud: %.2lf\n", Puntero_Personajes[i].DatosPersonales->Salud);
 	    //Caracteristicas
@@ -205,19 +207,21 @@ void batalla(TPersonaje *Puntero_Personajes){
 }
 
 void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
-	int x, Max_danio = 50000;
-	int poder_disparo1, efec_disparo1, valor_ataq1; //Ataque del Primer personaje
+	int x, Max_danio = 10000;
+	int poder_disparo1,  valor_ataq1; //Ataque del Primer personaje
+	double efec_disparo1, efec_disparo2;
 	int poder_defensa1; //Defensa del Primer personaje
-	int poder_disparo2, efec_disparo2, valor_ataq2; //Ataque del Segundo personaje
+	int poder_disparo2,  valor_ataq2; //Ataque del Segundo personaje
 	int poder_defensa2; //Defensa
-	int danio1, salud1; //Resultado del enfrentamiento del Primer personaje
-	int danio2, salud2; //Resultado del enfrentamiento del Segundo personaje
+	double danio1, salud1; //Resultado del enfrentamiento del Primer personaje
+	double danio2, salud2; //Resultado del enfrentamiento del Segundo personaje
 
 	salud1 = Puntero_Personajes[per_1].DatosPersonales->Salud;
 	salud2 = Puntero_Personajes[per_2].DatosPersonales->Salud;
 
 	for (int i = 0; i < 6; ++i){
 		printf("---Maximo daño: %d\n\n", Max_danio);
+		printf("TURNO: %d\n", i+1);
 		//Veo quien inicia atacando
 		//1 Primer personaje - 2 Segundo personaje
 		if((i%2)==0){x=2;}
@@ -226,61 +230,79 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 		if (x==1){
 		   //Ataque del primer personaje
 		   poder_disparo1 = (Puntero_Personajes[per_1].Caracteristicas->destreza * Puntero_Personajes[per_1].Caracteristicas->fuerza * Puntero_Personajes[per_1].Caracteristicas->Nivel);
-		   efec_disparo1 = (1+rand()%(101-1)*100);
+		   efec_disparo1 = (double)(1+rand()%(101-1));
 		   valor_ataq1 = poder_disparo1 * efec_disparo1;
 
 		   //Defensa del segundo personaje
 		   poder_defensa2 = (Puntero_Personajes[per_2].Caracteristicas->Armadura * Puntero_Personajes[per_2].Caracteristicas->velocidad);
-		   danio2 = ((valor_ataq1 * efec_disparo1 - poder_defensa2)/Max_danio)*100;
-		   salud2 = salud2 - danio2 ;
+		   danio2 = (((double)valor_ataq1 - (double)poder_defensa2)/(double)Max_danio)*100;
+
+		   if(danio2>0.0){
+		   		salud2 = salud2 - danio2 ;
+		   }
+		   else {
+		   	printf("ataque fallido\n");
+		   }
 
 		   printf("--Ataque: %s\n",Puntero_Personajes[per_1].DatosPersonales->ApellidoNombre);
 		   printf("Poder de disparo: %d\n",poder_disparo1);
-		   printf("Efectividad: %d\n",efec_disparo1);
+		   printf("Efectividad: %.2lf\n",efec_disparo1);
 		   printf("Valor: %d\n",valor_ataq1);
 		   //
-		   printf("--Defensa: %s\n",Puntero_Personajes[per_2].DatosPersonales->ApellidoNombre);
+		   printf("--Defensor: %s\n",Puntero_Personajes[per_2].DatosPersonales->ApellidoNombre);
 		   printf("Poder de defensa: %d\n",poder_defensa2);
-		   printf("Salud: %d\n",salud2);
-		   printf("Daño: %d\n",danio2);
+		   printf("Salud: %.2lf\n",salud2);
+		   printf("Daño recibido: %.2lf\n",danio2);
 		    printf("\n\n");
+		    if(salud2 <=0){i=6;}
 
-		   if(danio2 >= Max_danio){
-		   	printf("Ganador: %s\n",Puntero_Personajes[per_1].DatosPersonales->ApellidoNombre);
-		   	i=6;
-		   }
+		
 	    }
 	    if (x==2){
 		   //Ataque del segundo personaje
 		   poder_disparo2 = (Puntero_Personajes[per_2].Caracteristicas->destreza * Puntero_Personajes[per_2].Caracteristicas->fuerza * Puntero_Personajes[per_2].Caracteristicas->Nivel);
-		   efec_disparo2 = (1+rand()%(101-1)*100);
-		   valor_ataq2 = poder_disparo2 * efec_disparo2;
+		   efec_disparo2 = (double)(1+rand()%(101-1));
+		   valor_ataq2 = (double)poder_disparo2 * efec_disparo2;
 
 		   //Defensa del primer personaje
 		   poder_defensa1 = (Puntero_Personajes[per_1].Caracteristicas->Armadura * Puntero_Personajes[per_1].Caracteristicas->velocidad);
-		   danio1 = ((valor_ataq2 * efec_disparo2 - poder_defensa1)/Max_danio)*100;
-		   salud1 = salud1 - danio1;
+		   danio1 = (((double)valor_ataq2 - (double)poder_defensa1)/(double)Max_danio)*100;
+		   if(danio1>0.0){
+		   		salud1 = salud1 - danio1;
+		   }
+		   else {
+		   	printf("ataque fallido\n");
+		   }
 
 		   printf("--Ataque: %s\n",Puntero_Personajes[per_2].DatosPersonales->ApellidoNombre);
 		   printf("Poder de disparo: %d\n",poder_disparo2);
-		   printf("Efectividad: %d\n",efec_disparo2);
+		   printf("Efectividad: %.2lf\n",efec_disparo2);
 		   printf("Valor: %d\n",valor_ataq2);
 		   //
-		   printf("--Defensa: %s\n",Puntero_Personajes[per_1].DatosPersonales->ApellidoNombre);
+		   printf("--Defensor: %s\n",Puntero_Personajes[per_1].DatosPersonales->ApellidoNombre);
 		   printf("Poder de defensa: %d\n",poder_defensa1);
-		   printf("Salud: %d\n",salud1);
-		   printf("Daño: %d\n",danio1);
+		   printf("Salud: %.2lf\n",salud1);
+		   printf("Daño recibido: %.2lf\n",danio1);
 		   printf("\n\n");
+		   if(salud1 <=0){i=6;}
 
-		   if(danio1 >= Max_danio){
-		   	printf("Ganador: %s\n",Puntero_Personajes[per_2].DatosPersonales->ApellidoNombre);
-		   	i=6;
-		   }
+		  
 	    }
 		
 	}
-	if(Max_danio > danio1 && Max_danio > danio2){
+	 if(salud2 > salud1){
+		   	printf("Ganador: %s\n",Puntero_Personajes[per_2].DatosPersonales->ApellidoNombre);
+		   	;
+		   	exit (0);
+		   }
+	   if(salud1 >salud2){
+		   	printf("Ganador: %s\n",Puntero_Personajes[per_1].DatosPersonales->ApellidoNombre);
+		   	;
+		   	exit (0);
+		   }
+	if(salud1==salud2/*Max_danio > danio1 && Max_danio > danio2*/){
 		printf("Empate\n");
+		exit (0);
 	}
 }
 
