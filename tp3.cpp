@@ -41,10 +41,11 @@ TCaracteristicas cargarCarac();
 void Mostrar_Carac(TCaracteristicas carac);
 
 int main (void) {
-	TDatos pj1;
-	TDatos pj2;
+	int n;
+	srand(time(NULL));TDatos pj1;
+	/*TDatos pj2;
 	TCaracteristicas carac1;
-	srand(time(NULL));
+	
 
 	pj1 = cargaDatos();
 	pj2 = cargaDatos();
@@ -56,11 +57,22 @@ int main (void) {
 	//Mostrar_Carac(puntero);
 	//mostrarDatos(pj2);
 	Mostrar_Carac(carac1);
-	TPersonaje protagonista;
+	TPersonaje protagonista;*/
+	//cin.getline(Personajes[i].Caracteristicas);
+	printf("Ingrese el numero de peleadores:\n");
+	scanf("%d", &n);
+	TPersonaje peladores[n];
+	for(int i=0;i<n;i++){
+		TCaracteristicas *carac=(TCaracteristicas*)malloc(sizeof(TCaracteristicas*));
+		TDatos *datos=(TDatos*)malloc(sizeof(TDatos*));
+		*datos= cargaDatos();
+		mostrarDatos(*datos);
+		*carac= cargarCarac();
+		Mostrar_Carac(*carac); 
+		puts("-------------");
 	
-
-		//cin.getline(Personajes[i].Caracteristicas);
 		
+	}
 		
 	
 	//pelea(pj1, pj2);
