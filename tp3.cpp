@@ -31,7 +31,7 @@ TDatos *cargaDatos ();
 void mostrarDatos (TDatos datos);
 TCaracteristicas *cargarCarac();
 
-void pelea(TPersonaje  datos1, TPersonaje  Datos2);
+void pelea(TPersonaje  pj1, TPersonaje  pj2);
 void Mostrar_Carac(TCaracteristicas carac);
 
 int main (void) {
@@ -61,7 +61,7 @@ int main (void) {
 	scanf("%d", &num2);
 	
 
-	pelea(peleadores[num1+1], peleadores[num2+1] );
+	pelea(peleadores[num1-1], peleadores[num2-1] );
 	return 0;
 }
 
