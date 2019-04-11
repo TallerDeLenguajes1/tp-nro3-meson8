@@ -27,6 +27,15 @@ typedef struct TPersonaje {
 	TCaracteristicas * Caracteristicas;
 } TPersonaje;
 
+
+typedef struct nodo {
+	TPersonaje pj;
+	nodo * siguiente;
+} nodo;
+
+
+typedef nodo * ListaPJ;
+
 TDatos * cargaDatos (void);
 void mostrarDatos (TDatos *datos);
 
@@ -38,43 +47,58 @@ void muestraPJ (TPersonaje pj);
 
 void peleaPJ(TPersonaje *p1, TPersonaje *p2);
 
+
+
+
+ListaPJ crearListaPJ ();
+int esListaVacia (ListaPJ L);
+void insertarPJ (ListaPJ *L, TPersonaje personaje);
+void mostrarListaPJ (ListaPJ L);
+TPersonaje* selectorPJ (ListaPJ L, int num);
+
 // ___________________________________________________
 //                      MAIN
 // ___________________________________________________
 
 int main (void) {
-	TPersonaje pj;
-	TPersonaje *arrayPJ;
 	int i;
 	int cantPJs;
+	int num1, num2;
+	ListaPJ lista;
 
 	srand(time(NULL));
+
+	lista = crearListaPJ();
 
 	printf("Escriba la cantidad de personajes:\n");
 	scanf("%d", &cantPJs);
 
-	if (cantPJs <0) {
-		cantPJs *= -1; 
-	}
+	//if (cantPJs <0) {
+	//	cantPJs *= -1; 
+	//}
 
-	arrayPJ = (TPersonaje *) malloc (sizeof(TPersonaje)* cantPJs);
+
 
 	for (i=0; i<cantPJs; i++) {
-		arrayPJ[i] = cargaPJ();
+		insertarPJ(&lista, cargaPJ());
 	}
 
 
 
 	printf("\nEstos son los datos y caracteristicas de los %d personajes:\n", cantPJs);
-	for (i=0; i<cantPJs; i++) {
-		printf("#%d\n", (i+1));
-		muestraPJ(arrayPJ[i]);
-		printf("\n");
-	}
+	mostrarListaPJ(lista);
+	
 
+
+	printf("Elija su personaje:\n");
+	scanf("%d", &num1);
+	printf("Elija su contrincante:\n");
+	scanf("%d", &num2);
 
 	printf("PJ1 vs PJ2\n");
-	peleaPJ(&arrayPJ[0], &arrayPJ[1]);
+	printf("%p\n", selectorPJ(lista, num1));
+	printf("%p\n", selectorPJ(lista, num2));
+	peleaPJ(selectorPJ(lista, num1), selectorPJ(lista, num2));
 
 
 	return 0;
@@ -233,7 +257,7 @@ void peleaPJ(TPersonaje *p1, TPersonaje *p2) {
 
 		pB->DatosPersonales->Salud -= DP;
 
-		printf("\nTurno #%d\n", i);
+		printf("\nTurno #%d\n", i+1);
 		printf("%s ataca a %s\n", pA->DatosPersonales->ApellidoNombre, pB->DatosPersonales->ApellidoNombre);
 		printf("Poder de disparo: %d\n", podrDisp);
 		printf("Efectividad de disparo: %.2lf\n", efDisp);
@@ -264,4 +288,61 @@ void peleaPJ(TPersonaje *p1, TPersonaje *p2) {
 	
 
 	return;
+}
+
+
+ListaPJ crearListaPJ () {
+	//Crea una lista vacía
+	return NULL;
+}
+
+int esListaVacia (ListaPJ L){
+	//Booleano
+	//Retorna 1 si la lista es vacia
+	return (L == NULL);
+}
+
+void insertarPJ (ListaPJ *L, TPersonaje personaje){
+	//Inserta un nuevo nodo al principio de la lista con el valor ingresado
+	nodo *nuevo;
+
+	nuevo = (nodo*)malloc(sizeof(nodo));
+
+	nuevo->pj = personaje;
+	nuevo->siguiente = *L;
+
+	*L = nuevo;
+	return;
+}
+
+void mostrarListaPJ (ListaPJ L) {
+	//Muestra los elementos de la lista
+	int i = 0;
+
+	if (esListaVacia(L)) {
+		printf("(Sin personajes)");
+	}
+	else{
+		while (esListaVacia(L) != 1) {
+			printf("Personaje #%d\n", i+1);
+			muestraPJ(L->pj);
+			printf("\n");
+			L = L->siguiente;
+			i++;
+		}
+	}
+
+	return;
+}
+
+
+TPersonaje* selectorPJ (ListaPJ L, int num) {
+	int i=0;
+	ListaPJ Laux = L;
+	while (i<num-1 && Laux != NULL) {
+		printf("siguiente\n");
+		Laux = Laux->siguiente;
+		i++;
+	}
+	return &(Laux->pj);
 }
