@@ -28,129 +28,48 @@ typedef struct TPersonaje {
 	TCaracteristicas * Caracteristicas;
 } TPersonaje;
 
+typedef struct Nodo{
+	TPersonaje personajes;
+	Nodo * Siguiente;
+}Nodo;
 
-//Parte de Leo
-void Cargar_N_per(TPersonaje *Puntero_Personajes);
-void Mostrar_N_per(TPersonaje *Puntero_Personajes);
-void batalla(TPersonaje *Puntero_Personajes);
-void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2);
-int num_personaje();
-char continuar();
+
+int recorrernodo();
+void crearnodo();
+TDatos * cargaDatos (void);
+TCaracteristicas *  Cargar_Carac(void);
+Nodo * elegirpj(int pjnum);
+void batalla(Nodo * pj1, Nodo * pj2);
+void Resul_enfrent(TPersonaje pj1, TPersonaje pj2);
 //
+	Nodo * start=NULL;
 
 int main (void) {
-	TPersonaje *Puntero_Personajes = (TPersonaje *)malloc(sizeof(TPersonaje) * 6);
+	int num,pjnum,numdepjs;
 	srand(time(NULL));
-	//Parte de Leo
-	Cargar_N_per(Puntero_Personajes);
-    Mostrar_N_per(Puntero_Personajes);
-    printf("\n\n---Batalla\n\n");
-    batalla(Puntero_Personajes);
-    //
+	printf("Cuantos personajes desea mostrar?\n");
+	scanf("%d",&num);
+	for (int i = 0; i < num; ++i){
+		crearnodo();
+	}
+	numdepjs=recorrernodo();
+	printf("Elija el Primer contrincante\n");
+	scanf("%d",&pjnum);
+	while (pjnum>numdepjs){
+		printf("\nNumero incorrecto ingrese un numero entre 1 y %d\n",numdepjs);
+		scanf("%d",&pjnum);
+	}
+	Nodo * pj1=elegirpj(pjnum);
+	printf("\nElija el Segundo contrincante\n");
+	scanf("%d",&pjnum);
+	while (pjnum>numdepjs){
+		printf("\nNumero incorrecto ingrese un numero entre 1 y %d\n",numdepjs);
+		scanf("%d",&pjnum);
+	}	
+	Nodo * pj2=elegirpj(pjnum);
+	batalla(pj1,pj2);
+   
 	return 0;
-}
-/*------------------------Parte de Leo------------------------*/
-//Cargar Personajes
-void Cargar_N_per(TPersonaje *Puntero_Personajes){
-	enum TRaza raza;
-	for (int i = 0; i < 6; ++i){
-		Puntero_Personajes[i].DatosPersonales = (TDatos *)malloc(sizeof(TDatos));
-	    Puntero_Personajes[i].Caracteristicas = (TCaracteristicas *)malloc(sizeof(TCaracteristicas));
-	    //Datos Personales
-	    switch(rand()%5) {
-		    case 0: 
-			    raza = Orco;
-			    break;
-		    case 1: 
-			    raza = Humano;
-			    break;
-		    case 2: 
-			    raza = Enano;
-			    break;
-		    case 3: 
-			    raza = Mago;
-			    break;
-		    case 4: 
-			    raza = Elfo;
-			    break;
-
-		    default: Humano;
-	    }
-
-	    Puntero_Personajes[i].DatosPersonales->Raza = raza;
-	    Puntero_Personajes[i].DatosPersonales->edad = rand()%300;
-	    Puntero_Personajes[i].DatosPersonales->Salud = (double)100;
-	    Puntero_Personajes[i].DatosPersonales->Nombre = (char *) malloc (10);
-	    strcpy((Puntero_Personajes[i].DatosPersonales->Nombre), Nombres[rand()%6]);
-	    Puntero_Personajes[i].DatosPersonales->Apellido = (char *)malloc(10);
-	    strcpy((Puntero_Personajes[i].DatosPersonales->Apellido), Apellidos[rand()%6]);
-
-		//Caracteristicas
-		Puntero_Personajes[i].Caracteristicas->velocidad = 1+rand()%(11-1);
-		Puntero_Personajes[i].Caracteristicas->destreza = 1+rand()%(6-1);
-		Puntero_Personajes[i].Caracteristicas->fuerza = 1+rand()%(11-1);
-		Puntero_Personajes[i].Caracteristicas->Nivel = 1+rand()%(11-1);
-		Puntero_Personajes[i].Caracteristicas->Armadura = 1+rand()%(11-1);
-	}
-}
-//Mostrar Personajes
-void Mostrar_N_per(TPersonaje *Puntero_Personajes){
-	int i;
-	printf("¿Cuantos Personajes desea mostrar?(1-6) \n");
-
-		i=num_personaje()+1;
-		
-		for (int j = 0; j < i; ++j)
-		{
-		
-	    //Datos Personales
-			printf("--------Personaje num: %d--------\n",j+1);
-	    switch(Puntero_Personajes[j].DatosPersonales->Raza){
-		    case 0: 
-			    printf("Raza: %s\n", "Orco");
-			    break;
-		    case 1: 
-			    printf("Raza: %s\n", "Humano");
-			    break;
-		    case 2: 
-			    printf("Raza: %s\n", "Enano");
-			    break;
-		    case 3: 
-			    printf("Raza: %s\n", "Mago");
-			    break;
-		    case 4: 
-			    printf("Raza: %s\n", "Elfo");
-			    break;
-
-		    default: printf("Raza: %s\n", "Humano");
-	    }
-	    printf("Nombre: %s\n", Puntero_Personajes[j].DatosPersonales->Nombre);
-	    printf("Apellido: %s\n", Puntero_Personajes[j].DatosPersonales->Apellido);
-	    printf("Edad: %d\n", Puntero_Personajes[j].DatosPersonales->edad);
-	    printf("Salud: %.2lf\n", Puntero_Personajes[j].DatosPersonales->Salud);
-	    //Caracteristicas
-	    printf("Velocidad: %d\n", Puntero_Personajes[j].Caracteristicas->velocidad );
-	    printf("Destreza: %d\n", Puntero_Personajes[j].Caracteristicas->destreza);
-	    printf("Fuerza: %d\n", Puntero_Personajes[j].Caracteristicas->fuerza);
-	    printf("Nivel: %d\n", Puntero_Personajes[j].Caracteristicas->Nivel);
-	    printf("Armadura: %d\n\n", Puntero_Personajes[j].Caracteristicas->Armadura);
-	    printf("------------------------------------\n");
-		}
-	}
-
-//El numero del personaje
-int num_personaje(){
-	int numero;
-	scanf("%d", &numero);
-	fflush(stdin);
-	while(numero > 6){
-		printf("Numero incorrecto \nElija un numero del 1 al 6 \n");
-		scanf("%d", &numero);
-	    fflush(stdin);
-	}
-	numero=numero-1;
-	printf("\n\n");
-	return numero;
 }
 /*-------------------------------------------------------------*/
 /*REGLAS DEL JUEGO*/
@@ -175,20 +94,14 @@ Considerarlo como valor conceptual.
 . Actualizar salud: Daño provocado--
 */
 
-void batalla(TPersonaje *Puntero_Personajes){
-	int per_1, per_2;
-	
-	printf("--Primer contrincante\n");
-	per_1 = num_personaje();
-	printf("--Segundo contrincante\n");
-	per_2 = num_personaje();
+void batalla(Nodo * pj1, Nodo * pj2){
 
-	printf("\n\n %s %s Vs %s %s\n", Puntero_Personajes[per_1].DatosPersonales->Nombre, Puntero_Personajes[per_1].DatosPersonales->Apellido, Puntero_Personajes[per_2].DatosPersonales->Nombre, Puntero_Personajes[per_2].DatosPersonales->Apellido);
-	Resul_enfrent(Puntero_Personajes, per_1, per_2);
+	printf("\n\n %s %s Vs %s %s\n", pj1->personajes.DatosPersonales->Nombre,pj1->personajes.DatosPersonales->Apellido,pj2->personajes.DatosPersonales->Nombre,pj2->personajes.DatosPersonales->Apellido);
+	Resul_enfrent(pj1->personajes,pj2->personajes);
 }
 
-void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
-	int x, Max_danio = 50000;
+void Resul_enfrent(TPersonaje pj1, TPersonaje pj2){
+	int x;
 	int poder_disparo1, valor_ataq1; //Ataque del Primer personaje
 	double efec_disparo1, efec_disparo2; 
 	int poder_defensa1; //Defensa del Primer personaje
@@ -197,13 +110,13 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 	int danio1, salud1; //Resultado del enfrentamiento del Primer personaje
 	int danio2, salud2; //Resultado del enfrentamiento del Segundo personaje
 
-	salud1 = Puntero_Personajes[per_1].DatosPersonales->Salud;
-	salud2 = Puntero_Personajes[per_2].DatosPersonales->Salud;
+	salud1 = pj1.DatosPersonales->Salud;
+	salud2 = pj2.DatosPersonales->Salud;
 
-		   //Defensa del primer personaje
-		   poder_defensa1 = (Puntero_Personajes[per_1].Caracteristicas->Armadura * Puntero_Personajes[per_1].Caracteristicas->velocidad);
-		   //Defensa del segundo personaje
-		   poder_defensa2 = (Puntero_Personajes[per_2].Caracteristicas->Armadura * Puntero_Personajes[per_2].Caracteristicas->velocidad);
+	//Defensa del primer personaje
+	poder_defensa1 = (pj1.Caracteristicas->Armadura * pj1.Caracteristicas->velocidad);
+	//Defensa del segundo personaje
+	poder_defensa2 = (pj2.Caracteristicas->Armadura * pj2.Caracteristicas->velocidad);
 	for (int i = 0; i < 6; ++i){
 		printf("--------Round %d --------\n",i+1);
 		//Veo quien inicia atacando
@@ -213,15 +126,15 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 
 		if (x==1){
 		   //Ataque del primer personaje
-		   poder_disparo1 = (Puntero_Personajes[per_1].Caracteristicas->destreza * Puntero_Personajes[per_1].Caracteristicas->fuerza * Puntero_Personajes[per_1].Caracteristicas->Nivel);
+		   poder_disparo1 = (pj1.Caracteristicas->destreza * pj1.Caracteristicas->fuerza * pj1.Caracteristicas->Nivel);
 		   efec_disparo1 =(double) (rand()%100)/100;
 		   valor_ataq1 = poder_disparo1 * efec_disparo1;
-		   printf("--Ataque: %s %s\n",Puntero_Personajes[per_1].DatosPersonales->Nombre, Puntero_Personajes[per_1].DatosPersonales->Apellido);
+		   printf("--Ataque: %s %s\n",pj1.DatosPersonales->Nombre, pj1.DatosPersonales->Apellido);
 		   printf("Poder de disparo: %d\n",poder_disparo1);
 		   printf("Efectividad: %.2lf\n",efec_disparo1);
 		   printf("Valor: %d\n",valor_ataq1);
 		   //
-		   printf("--Defensa: %s %s\n",Puntero_Personajes[per_2].DatosPersonales->Nombre, Puntero_Personajes[per_2].DatosPersonales->Apellido);
+		   printf("--Defensa: %s %s\n",pj2.DatosPersonales->Nombre, pj2.DatosPersonales->Apellido);
 		   printf("Poder de defensa: %d\n",poder_defensa2);
 
 
@@ -229,17 +142,17 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 		   {
 		   	danio2 = 0;
 		   	poder_defensa2=poder_defensa2 - valor_ataq1;
-		   printf("Daño: %d\n",danio2);
+			printf("Daño: %d\n",danio2);
 			   }
 		   else {
 		   	danio2 = (valor_ataq1  - poder_defensa2);
 		   	poder_defensa2 = poder_defensa2 - valor_ataq1;
-		   printf("Daño: %d\n",danio2);
+			printf("Daño: %d\n",danio2);
 		   }
 		   salud2 = salud2 - danio2;
 
 		   printf("Salud: %d\n",salud2);
-		    printf("\n\n");
+		   printf("\n\n");
 
 		    if (salud2<=0)
 		    {
@@ -249,28 +162,28 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 	    }
 	    if (x==2){
 		   //Ataque del segundo personaje
-		   poder_disparo2 = (Puntero_Personajes[per_2].Caracteristicas->destreza * Puntero_Personajes[per_2].Caracteristicas->fuerza * Puntero_Personajes[per_2].Caracteristicas->Nivel);
+		   poder_disparo2 = (pj2.Caracteristicas->destreza * pj2.Caracteristicas->fuerza * pj2.Caracteristicas->Nivel);
 		   efec_disparo2 =(double) (rand()%100)/100;;
 		   valor_ataq2 = poder_disparo2 * efec_disparo2;
-		   printf("--Ataque: %s %s\n",Puntero_Personajes[per_2].DatosPersonales->Nombre, Puntero_Personajes[per_2].DatosPersonales->Apellido);
+		   printf("--Ataque: %s %s\n",pj2.DatosPersonales->Nombre, pj2.DatosPersonales->Apellido);
 		   printf("Poder de disparo: %d\n",poder_disparo2);
 		   printf("Efectividad: %.2lf\n",efec_disparo2);
 		   printf("Valor: %d\n",valor_ataq2);
 		   //
-		   printf("--Defensa: %s\n",Puntero_Personajes[per_1].DatosPersonales->Nombre);
+		   printf("--Defensa: %s\n",pj1.DatosPersonales->Nombre);
 		   printf("Poder de defensa: %d\n",poder_defensa1);
 
 		   if (poder_defensa1 > valor_ataq2)
 		   {
 		   	danio1 = 0;
 		   	poder_defensa1=poder_defensa1 - valor_ataq2;
-		   printf("Daño: %d\n",danio1);
+			printf("Daño: %d\n",danio1);
 
 		   }
 		   else {
 		   	danio1 = (valor_ataq2 - poder_defensa1);
 		   	poder_defensa1 = poder_defensa1 - valor_ataq2;
-		   printf("Daño: %d\n",danio1);
+			printf("Daño: %d\n",danio1);
 		   }
 
 		   salud1 = salud1 - danio1;
@@ -288,8 +201,8 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 		
 	}
 	if(salud2 < salud1){
-		   	printf("Ganador: %s %s\n",Puntero_Personajes[per_1].DatosPersonales->Nombre, Puntero_Personajes[per_1].DatosPersonales->Apellido);
-	switch(Puntero_Personajes[per_1].DatosPersonales->Raza){
+		   	printf("Ganador: %s %s\n",pj1.DatosPersonales->Nombre, pj1.DatosPersonales->Apellido);
+	switch(pj1.DatosPersonales->Raza){
 		    case 0: 
 			    printf("Raza: %s\n", "Orco");
 			    break;
@@ -309,11 +222,11 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 		    default: printf("Raza: %s\n", "Humano");
 	    }
 		  
-		   	printf("Edad: %d\n",Puntero_Personajes[per_1].DatosPersonales->edad);
+		   	printf("Edad: %d\n",pj1.DatosPersonales->edad);
 		   }
 	 else if(salud1 < salud2){
-		   	printf("Ganador: %s %s\n",Puntero_Personajes[per_2].DatosPersonales->Nombre ,Puntero_Personajes[per_2].DatosPersonales->Apellido);
-		 switch(Puntero_Personajes[per_1].DatosPersonales->Raza){
+		   	printf("Ganador: %s %s\n",pj2.DatosPersonales->Nombre ,pj2.DatosPersonales->Apellido);
+		 switch(pj2.DatosPersonales->Raza){
 		    case 0: 
 			    printf("Raza: %s\n", "Orco");
 			    break;
@@ -332,9 +245,133 @@ void Resul_enfrent(TPersonaje *Puntero_Personajes, int per_1, int per_2){
 
 		    default: printf("Raza: %s\n", "Humano");
 	    }
-		   	printf("Edad: %d\n",Puntero_Personajes[per_2].DatosPersonales->edad);
+		   	printf("Edad: %d\n",pj2.DatosPersonales->edad);
 		   }
 	else if(salud1 == salud2){
 		printf("Empate\n");
 	}
 }
+
+
+TDatos* cargaDatos (void) {
+	TDatos *datos;
+	enum TRaza raza;
+
+	datos = (TDatos*) malloc (sizeof(TDatos));
+
+	//Determinar Raza
+	switch(rand()%5) {
+		case 0: 
+			raza = Orco;
+			break;
+		case 1: 
+			raza = Humano;
+			break;
+		case 2: 
+			raza = Enano;
+			break;
+		case 3: 
+			raza = Mago;
+			break;
+		case 4: 
+			raza = Elfo;
+			break;
+
+		default: Humano;
+	}
+	datos->Raza = raza;
+
+
+	datos->Nombre = (char *) malloc (10);
+	strcpy((datos->Nombre), Nombres[rand()%6]);
+	datos->Apellido = (char *) malloc (10);
+	strcpy((datos->Apellido), Apellidos[rand()%6]);
+
+
+	datos->edad = rand()%300;
+
+	datos->Salud = (double)100;
+	return datos;
+}
+
+
+TCaracteristicas* Cargar_Carac(void){
+	TCaracteristicas *carac; 
+
+	carac = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
+
+	carac->velocidad = 1+rand()%(11-1);
+	carac->destreza = 1+rand()%(6-1);
+	carac->fuerza = 1+rand()%(11-1);
+	carac->Nivel = 1+rand()%(11-1);
+	carac->Armadura = 1+rand()%(11-1);
+
+	return carac;
+}
+
+void crearnodo(){
+	Nodo * nuevo = (Nodo *)malloc(sizeof(Nodo));
+	nuevo->personajes.Caracteristicas=Cargar_Carac();
+	nuevo->personajes.DatosPersonales=cargaDatos();
+	if (start == NULL)
+	{
+		start=nuevo;
+		nuevo->Siguiente=NULL;
+	}
+	else {
+		nuevo->Siguiente=start;
+		start=nuevo;
+	}
+}
+int recorrernodo(){
+	Nodo * recorrer = start;
+	int cont=1;
+	while(recorrer != NULL){
+		printf("----Personaje num %d----\n",cont);
+
+			printf("Raza: ");
+switch(recorrer->personajes.DatosPersonales->Raza) {
+		case 0: 
+			printf("%s\n", "Orco");
+			break;
+		case 1: 
+			printf("%s\n", "Humano");
+			break;
+		case 2: 
+			printf("%s\n", "Enano");
+			break;
+		case 3: 
+			printf("%s\n", "Mago");
+			break;
+		case 4: 
+			printf("%s\n", "Elfo");
+			break;
+
+		default: printf("%s\n", "Humano");
+	}
+
+		printf("Nombre: %s\n", recorrer->personajes.DatosPersonales->Nombre);
+		printf("Apellido: %s\n", recorrer->personajes.DatosPersonales->Apellido);
+		printf("Edad: %d\n", recorrer->personajes.DatosPersonales->edad);
+		printf("Salud: %.2lf\n", recorrer->personajes.DatosPersonales->Salud);
+		printf("Velocidad: %d\n", recorrer->personajes.Caracteristicas->velocidad );
+		printf("Destreza: %d\n", recorrer->personajes.Caracteristicas->destreza);
+		printf("Fuerza: %d\n", recorrer->personajes.Caracteristicas->fuerza);
+		printf("Nivel: %d\n", recorrer->personajes.Caracteristicas->Nivel);
+		printf("Armadura: %d\n\n",recorrer->personajes.Caracteristicas->Armadura);
+		
+		recorrer=recorrer->Siguiente;
+		cont++;
+	}
+	return(cont-1);
+}
+Nodo * elegirpj(int pjnum){
+	int i=1;
+	Nodo * extraer=start;
+	while(pjnum>i){
+		extraer=extraer->Siguiente;
+		i++;
+	}
+	printf("Usted eligio al personaje: %s\n",extraer->personajes.DatosPersonales->Nombre );
+	return (extraer);
+};
