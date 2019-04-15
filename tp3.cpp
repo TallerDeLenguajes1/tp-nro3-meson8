@@ -5,8 +5,8 @@
 #include <time.h>
 
 enum TRaza{Orco, Humano, Mago, Enano, Elfo};
-char Nombres[6][10]={"jorgito", "bartolito", "cavo", "dingo", "elmo", "Olaf"};
-char Apellidos[6][10]={"fausto", "gomez", "hormiga", "indio", "jacinto"};
+char Nombres[6][11]={"Harry", "Lord", "Rubeus", "Albus", "Hermione", "Severus"};
+char Apellidos[6][11]={"Potter", "Voldemort", "Hagrid", "Dumbledore", "Granger", "Snape"};
 
 typedef struct TDatos {
 	TRaza Raza; //nota 1
@@ -39,36 +39,30 @@ void crearnodo();
 TDatos * cargaDatos (void);
 TCaracteristicas *  Cargar_Carac(void);
 Nodo * elegirpj(int pjnum);
-void batalla(Nodo * pj1, Nodo * pj2);
+Nodo * choicevs(int numdepjs);
+void batalla(Nodo * pja, Nodo * pjb);
 void Resul_enfrent(TPersonaje pj1, TPersonaje pj2);
+void liberar();
 //
 	Nodo * start=NULL;
 
 int main (void) {
-	int num,pjnum,numdepjs;
+	setvbuf(stdout, NULL, _IONBF, 0);
+	int num=NULL,pjnum,numdepjs;
 	srand(time(NULL));
 	printf("Cuantos personajes desea mostrar?\n");
 	scanf("%d",&num);
+	while(num>6 || 0>=num){
+		printf("Numero incorrecto, elija un numero entre 1 y 6\n");
+		scanf("%d",&num);
+	}
 	for (int i = 0; i < num; ++i){
 		crearnodo();
 	}
 	numdepjs=recorrernodo();
-	printf("Elija el Primer contrincante\n");
-	scanf("%d",&pjnum);
-	while (pjnum>numdepjs){
-		printf("\nNumero incorrecto ingrese un numero entre 1 y %d\n",numdepjs);
-		scanf("%d",&pjnum);
-	}
-	Nodo * pj1=elegirpj(pjnum);
-	printf("\nElija el Segundo contrincante\n");
-	scanf("%d",&pjnum);
-	while (pjnum>numdepjs){
-		printf("\nNumero incorrecto ingrese un numero entre 1 y %d\n",numdepjs);
-		scanf("%d",&pjnum);
-	}	
-	Nodo * pj2=elegirpj(pjnum);
-	batalla(pj1,pj2);
-   
+	choicevs(numdepjs);
+	liberar();
+
 	return 0;
 }
 /*-------------------------------------------------------------*/
@@ -256,6 +250,7 @@ void Resul_enfrent(TPersonaje pj1, TPersonaje pj2){
 TDatos* cargaDatos (void) {
 	TDatos *datos;
 	enum TRaza raza;
+	int random=rand()%6;
 
 	datos = (TDatos*) malloc (sizeof(TDatos));
 
@@ -282,10 +277,10 @@ TDatos* cargaDatos (void) {
 	datos->Raza = raza;
 
 
-	datos->Nombre = (char *) malloc (10);
-	strcpy((datos->Nombre), Nombres[rand()%6]);
-	datos->Apellido = (char *) malloc (10);
-	strcpy((datos->Apellido), Apellidos[rand()%6]);
+	datos->Nombre = (char *) malloc (11);
+	strcpy((datos->Nombre), Nombres[random]);
+	datos->Apellido = (char *) malloc (11);
+	strcpy((datos->Apellido), Apellidos[random]);
 
 
 	datos->edad = rand()%300;
@@ -375,3 +370,33 @@ Nodo * elegirpj(int pjnum){
 	printf("Usted eligio al personaje: %s\n",extraer->personajes.DatosPersonales->Nombre );
 	return (extraer);
 };
+void liberar()
+{
+    struct Nodo *reco = start;
+    struct Nodo *bor;
+    while (reco != NULL)
+    {
+        bor = reco;
+        reco = reco->Siguiente;
+        free(bor);
+    }
+}
+	Nodo * choicevs(int numdepjs){
+	int pjnum;
+	printf("Elija el Primer contrincante\n");
+	scanf("%d",&pjnum);
+	while (pjnum>numdepjs || 0>=pjnum){
+		printf("\nNumero incorrecto ingrese un numero entre 1 y %d\n",numdepjs);
+		scanf("%d",&pjnum);
+	}
+	Nodo * pj1=elegirpj(pjnum);
+	printf("\nElija el Segundo contrincante\n");
+	scanf("%d",&pjnum);
+	while (pjnum>numdepjs || 0>=pjnum){
+		printf("\nNumero incorrecto ingrese un numero entre 1 y %d\n",numdepjs);
+		scanf("%d",&pjnum);
+	}	
+	Nodo * pj2=elegirpj(pjnum);
+	batalla(pj1, pj2);	
+	return 0;
+	}
