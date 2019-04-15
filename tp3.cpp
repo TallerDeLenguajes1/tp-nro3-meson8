@@ -33,7 +33,7 @@ typedef struct Nodo{
 	Nodo * Siguiente;
 }Nodo;
 
-
+int mostrarpjs();
 int recorrernodo();
 void crearnodo();
 TDatos * cargaDatos (void);
@@ -48,18 +48,9 @@ void liberar();
 
 int main (void) {
 	setvbuf(stdout, NULL, _IONBF, 0);
-	int num=NULL,pjnum,numdepjs;
+	int numdepjs;
 	srand(time(NULL));
-	printf("Cuantos personajes desea mostrar?\n");
-	scanf("%d",&num);
-	while(num>6 || 0>=num){
-		printf("Numero incorrecto, elija un numero entre 1 y 6\n");
-		scanf("%d",&num);
-	}
-	for (int i = 0; i < num; ++i){
-		crearnodo();
-	}
-	numdepjs=recorrernodo();
+	numdepjs=mostrarpjs();
 	choicevs(numdepjs);
 	liberar();
 
@@ -318,6 +309,7 @@ void crearnodo(){
 		start=nuevo;
 	}
 }
+
 int recorrernodo(){
 	Nodo * recorrer = start;
 	int cont=1;
@@ -360,6 +352,20 @@ switch(recorrer->personajes.DatosPersonales->Raza) {
 	}
 	return(cont-1);
 }
+	int mostrarpjs(){
+		int numdepjs,num;
+	printf("Cuantos personajes desea mostrar?\n");
+	scanf("%d",&num);
+	while(num>6 || 0>=num){
+		printf("Numero incorrecto, elija un numero entre 1 y 6\n");
+		scanf("%d",&num);
+	}
+	for (int i = 0; i < num; ++i){
+		crearnodo();
+	}
+	numdepjs=recorrernodo();
+	return(numdepjs);
+	}
 Nodo * elegirpj(int pjnum){
 	int i=1;
 	Nodo * extraer=start;
