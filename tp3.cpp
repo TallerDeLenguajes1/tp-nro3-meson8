@@ -207,7 +207,7 @@ void Resul_enfrent(TPersonaje pj1, TPersonaje pj2){
 		    default: printf("Raza: %s\n", "Humano");
 	    }
 		  
-		   	printf("Edad: %d\n",pj1.DatosPersonales->edad);
+		   	printf("Salud: %.2lf\n",pj1.DatosPersonales->Salud);
 		   }
 	 else if(salud1 < salud2){
 		   	printf("Ganador: %s %s\n",pj2.DatosPersonales->Nombre ,pj2.DatosPersonales->Apellido);
@@ -230,7 +230,7 @@ void Resul_enfrent(TPersonaje pj1, TPersonaje pj2){
 
 		    default: printf("Raza: %s\n", "Humano");
 	    }
-		   	printf("Edad: %d\n",pj2.DatosPersonales->edad);
+		   	printf("Salud: %.2lf\n",pj2.DatosPersonales->Salud);
 		   }
 	else if(salud1 == salud2){
 		printf("Empate\n");
