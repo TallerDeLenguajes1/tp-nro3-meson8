@@ -45,7 +45,7 @@ void Mostrar_Carac(TCaracteristicas *carac);
 TPersonaje cargaPJ (void);
 void muestraPJ (TPersonaje pj);
 
-void peleaPJ(TPersonaje *p1, TPersonaje *p2);
+int peleaPJ(TPersonaje *p1, TPersonaje *p2);
 
 
 
@@ -96,8 +96,6 @@ int main (void) {
 	scanf("%d", &num2);
 
 	printf("PJ1 vs PJ2\n");
-	printf("%p\n", selectorPJ(lista, num1));
-	printf("%p\n", selectorPJ(lista, num2));
 	peleaPJ(selectorPJ(lista, num1), selectorPJ(lista, num2));
 
 
@@ -217,18 +215,18 @@ void muestraPJ (TPersonaje pj) {
 }
 
 
-void peleaPJ(TPersonaje *p1, TPersonaje *p2) {
+int peleaPJ(TPersonaje *p1, TPersonaje *p2) {
+	//Retorna 1 si gana PJ1, 2 si gana PJ2, 0 si hay empate
 	int i;
-	int resultado; //1 si gana PJ1, 2 si gana PJ2, 0 si hay empate
 	int podrDisp, podrDef, maxDP;
 	double DP, efDisp, valorAtk;
 	TPersonaje *pA, *pB;
 	TCaracteristicas caracA, caracB;
 
-	maxDP = 5000;
-	resultado = 0;
+	maxDP = 500;
 
 	for(i=0; i<6;i++) {
+		printf("\nTurno #%d\n", i+1);
 		//Turno de PJ1 cuando i es par
 		//Turno de PJ2 cuando i es impar
 		if (i%2 == 0) {
@@ -245,8 +243,9 @@ void peleaPJ(TPersonaje *p1, TPersonaje *p2) {
 		}
 
 		podrDisp = caracA.destreza * caracA.fuerza * caracA.nivel;
-		efDisp = (double) (1 + rand()%100)/100;
+		efDisp = (double) (5 + rand()%10)/10;
 		valorAtk = (double) podrDisp * efDisp;
+
 		podrDef = caracB.armadura * caracB.velocidad;
 		
 		DP =  ((double)(valorAtk - podrDef)/ (double)maxDP)*100;
@@ -255,14 +254,19 @@ void peleaPJ(TPersonaje *p1, TPersonaje *p2) {
 			DP = 0;
 		}
 
-		pB->DatosPersonales->Salud -= DP;
+		if (pB->DatosPersonales->Salud > DP) {
+			pB->DatosPersonales->Salud -= DP;
+		}
+		else {
+			pB->DatosPersonales->Salud = 0;
+			i = 6;
+		}
 
-		printf("\nTurno #%d\n", i+1);
 		printf("%s ataca a %s\n", pA->DatosPersonales->ApellidoNombre, pB->DatosPersonales->ApellidoNombre);
 		printf("Poder de disparo: %d\n", podrDisp);
 		printf("Efectividad de disparo: %.2lf\n", efDisp);
 		printf("Valor de ataque: %.2lf\n", valorAtk);
-		printf("Defensa del enemigo: %d\n", podrDef);
+		printf("Poder de defensa del enemigo: %d\n", podrDef);
 		printf("Danio producido: %.2lf\n", DP);
 		printf("Salud de %s: %.2lf\n", pB->DatosPersonales->ApellidoNombre, pB->DatosPersonales->Salud);
 	}
@@ -273,21 +277,16 @@ void peleaPJ(TPersonaje *p1, TPersonaje *p2) {
 
 	if (p1->DatosPersonales->Salud > p2->DatosPersonales->Salud) {
 		printf("\nGana %s", p1->DatosPersonales->ApellidoNombre);
+		return 1;
 	}
-	else if (p1->DatosPersonales->Salud > p2->DatosPersonales->Salud){
-
+	else if (p1->DatosPersonales->Salud < p2->DatosPersonales->Salud){
 		printf("\nGana %s\n", p2->DatosPersonales->ApellidoNombre);
-
+		return 2;
 	}
 	else {
 		printf("\nEmpate\n");
-		printf("p1:\n");
-		printf("p2:\n");
+		return 0;
 	}
-
-	
-
-	return;
 }
 
 
@@ -340,7 +339,6 @@ TPersonaje* selectorPJ (ListaPJ L, int num) {
 	int i=0;
 	ListaPJ Laux = L;
 	while (i<num-1 && Laux != NULL) {
-		printf("siguiente\n");
 		Laux = Laux->siguiente;
 		i++;
 	}
