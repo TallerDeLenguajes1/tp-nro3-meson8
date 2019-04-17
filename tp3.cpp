@@ -33,26 +33,24 @@ typedef struct Nodo{
 	Nodo * Siguiente;
 }Nodo;
 
-int mostrarpjs();
-int recorrernodo();
-void crearnodo();
+int mostrarpjs(Nodo ** start);
+int recorrernodo(Nodo ** start);
+void crearnodo(Nodo ** start);
 TDatos * cargaDatos (void);
 TCaracteristicas *  Cargar_Carac(void);
-Nodo * elegirpj(int pjnum);
-Nodo * choicevs(int numdepjs);
+Nodo * elegirpj(int pjnum,Nodo ** start);
+Nodo * choicevs(int numdepjs,Nodo * start);
 void batalla(Nodo * pja, Nodo * pjb);
 void Resul_enfrent(TPersonaje pj1, TPersonaje pj2);
-void liberar();
 //
-	Nodo * start=NULL;
 
 int main (void) {
 	setvbuf(stdout, NULL, _IONBF, 0);
+	Nodo * start = NULL;
 	int numdepjs;
 	srand(time(NULL));
-	numdepjs=mostrarpjs();
-	choicevs(numdepjs);
-	liberar();
+	numdepjs=mostrarpjs(&start);
+	choicevs(numdepjs,start);
 
 	return 0;
 }
@@ -295,23 +293,23 @@ TCaracteristicas* Cargar_Carac(void){
 	return carac;
 }
 
-void crearnodo(){
+void crearnodo(Nodo ** start){
 	Nodo * nuevo = (Nodo *)malloc(sizeof(Nodo));
 	nuevo->personajes.Caracteristicas=Cargar_Carac();
 	nuevo->personajes.DatosPersonales=cargaDatos();
-	if (start == NULL)
+	if (*start == NULL)
 	{
-		start=nuevo;
+		*start=nuevo;
 		nuevo->Siguiente=NULL;
 	}
 	else {
-		nuevo->Siguiente=start;
-		start=nuevo;
+		nuevo->Siguiente=*start;
+		*start=nuevo;
 	}
 }
 
-int recorrernodo(){
-	Nodo * recorrer = start;
+int recorrernodo(Nodo ** start){
+	Nodo * recorrer = *start;
 	int cont=1;
 	while(recorrer != NULL){
 		printf("----Personaje num %d----\n",cont);
@@ -352,23 +350,23 @@ switch(recorrer->personajes.DatosPersonales->Raza) {
 	}
 	return(cont-1);
 }
-	int mostrarpjs(){
+	int mostrarpjs(Nodo ** start){
 		int numdepjs,num;
 	printf("Cuantos personajes desea mostrar?\n");
 	scanf("%d",&num);
-	while(num>6 || 0>=num){
-		printf("Numero incorrecto, elija un numero entre 1 y 6\n");
+	while(num>6 || 1>=num){
+		printf("Numero incorrecto, elija un numero entre 2 y 6\n");
 		scanf("%d",&num);
 	}
 	for (int i = 0; i < num; ++i){
-		crearnodo();
+		crearnodo(start);
 	}
-	numdepjs=recorrernodo();
+	numdepjs=recorrernodo(start);
 	return(numdepjs);
 	}
-Nodo * elegirpj(int pjnum){
+Nodo * elegirpj(int pjnum,Nodo ** start){
 	int i=1;
-	Nodo * extraer=start;
+	Nodo * extraer=*start;
 	while(pjnum>i){
 		extraer=extraer->Siguiente;
 		i++;
@@ -376,18 +374,7 @@ Nodo * elegirpj(int pjnum){
 	printf("Usted eligio al personaje: %s\n",extraer->personajes.DatosPersonales->Nombre );
 	return (extraer);
 };
-void liberar()
-{
-    struct Nodo *reco = start;
-    struct Nodo *bor;
-    while (reco != NULL)
-    {
-        bor = reco;
-        reco = reco->Siguiente;
-        free(bor);
-    }
-}
-	Nodo * choicevs(int numdepjs){
+Nodo * choicevs(int numdepjs, Nodo * start){
 	int pjnum;
 	printf("Elija el Primer contrincante\n");
 	scanf("%d",&pjnum);
@@ -395,14 +382,14 @@ void liberar()
 		printf("\nNumero incorrecto ingrese un numero entre 1 y %d\n",numdepjs);
 		scanf("%d",&pjnum);
 	}
-	Nodo * pj1=elegirpj(pjnum);
+	Nodo * pj1=elegirpj(pjnum,&start);
 	printf("\nElija el Segundo contrincante\n");
 	scanf("%d",&pjnum);
 	while (pjnum>numdepjs || 0>=pjnum){
 		printf("\nNumero incorrecto ingrese un numero entre 1 y %d\n",numdepjs);
 		scanf("%d",&pjnum);
 	}	
-	Nodo * pj2=elegirpj(pjnum);
+	Nodo * pj2=elegirpj(pjnum,&start);
 	batalla(pj1, pj2);	
 	return 0;
 	}
