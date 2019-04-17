@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <conio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -35,19 +36,19 @@ typedef struct Nodo{
 typedef Nodo *Lista;
 
 //Declaracion de Funciones
-TDatos *Cargar_Datos(void);
-TCaracteristicas *Cargar_Carac(void);
-TPersonaje Carga_Per();
-void Mostrar_Datos (TDatos *datos);
-void Mostrar_Carac(TCaracteristicas *carac);
-void Muestra_Per (TPersonaje Per);
-void Mostrar_Lista (Lista L);
-int esListaVacia (Lista L);
-void Crear_Per(Lista *L, TPersonaje Personaje);
-void batalla(Lista L);
-int num_personaje();
-TPersonaje *Personaje_Elejido(Lista L, int num);
-void Resul_enfrent(TPersonaje *Per_1, TPersonaje *Per_2);
+TDatos *Cargar_Datos(void); //Funcion para cargar los datos de los personajes
+TCaracteristicas *Cargar_Carac(void); //Funcion para cargar las caracteristicas de los personajes
+TPersonaje Carga_Per(); //Funcion para cargar los personajes
+void Mostrar_Datos (TDatos *datos); //Funcion para mostrar los datos de los personajes
+void Mostrar_Carac(TCaracteristicas *carac); //Funcion para mostrar las caracteristicas de los personajes
+void Muestra_Per (TPersonaje Per); //Funcion para mostrar los personajes
+void Mostrar_Lista (Lista L); //Funcion para mostrar la lista de los personajes
+int esListaVacia (Lista L); //Funcion para ver si la lista esta vacia
+void Crear_Per(Lista *L, TPersonaje Personaje); //Funcion para crear los personajes
+void batalla(Lista L); //Funcion para la batalla
+int num_personaje(); //Funcion para elejir los personajes
+TPersonaje *Personaje_Elejido(Lista L, int num); //Funcion para mandar el personaje elejido
+void Resul_enfrent(TPersonaje *Per_1, TPersonaje *Per_2); //Funcion para saber el resultado de la batalla
 
 
 int main (void) {
@@ -61,6 +62,9 @@ int main (void) {
 	}
 	printf("------------------------Personajes------------------------\n\n");
 	Mostrar_Lista (Lista_Per);
+	printf("\n---Presione enter para continuar\n\n");
+	getch();
+	
 	printf("\n\n------------------------Batalla-----------------------\n\n");
 	batalla(Lista_Per);
 	
@@ -112,8 +116,11 @@ TDatos *Cargar_Datos(void){
 	    }
 
 	    Datos->Raza = raza;
-	    Datos->ApellidoNombre = (char *) malloc (10);
+	    Datos->ApellidoNombre = (char *) malloc (30);
  		strcpy((Datos->ApellidoNombre), Nombres[rand()%6]);
+ 		strcat((Datos->ApellidoNombre), " , ");
+ 		strcat((Datos->ApellidoNombre), Apellidos[rand()%6]);
+
 	    Datos->edad = rand()%300;
 	    Datos->Salud = (double)100;
 
@@ -207,7 +214,7 @@ void batalla(Lista L){
 TPersonaje *Personaje_Elejido(Lista L, int num){
 	int i=0;
 	Lista aux = L;
-	num = num-1;
+	
 	while (i<num && aux != NULL) {
 		//printf("siguiente\n");
 		aux = aux->Siguiente;
@@ -326,8 +333,3 @@ void Resul_enfrent(TPersonaje *Per_1, TPersonaje *Per_2){
 		exit (0);
 	}
 }
-
-
-
-
-
