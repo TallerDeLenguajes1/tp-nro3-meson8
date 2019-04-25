@@ -29,32 +29,34 @@ typedef struct TPersonaje {
 
 
 typedef struct nodo {
-	TPersonaje pj;
+	TPersonaje * pj;
 	nodo * siguiente;
 } nodo;
 
 
+
 typedef nodo * ListaPJ;
 
-TDatos * cargaDatos (void);
-void mostrarDatos (TDatos *datos);
 
-TCaracteristicas *  Cargar_Carac(void);
-void Mostrar_Carac(TCaracteristicas *carac);
-
-TPersonaje cargaPJ (void);
-void muestraPJ (TPersonaje pj);
+void cargaDatos (void);
+void mostrarDatos (TPersonaje * personaje);
+void Cargar_Carac(void);
+void Mostrar_Carac(TPersonaje * personaje);
+TPersonaje * cargaPJ (void);
+void muestraPJ (TPersonaje * personaje);
 
 int peleaPJ(TPersonaje *p1, TPersonaje *p2);
 
 
 
 
-ListaPJ crearListaPJ ();
+ListaPJ crearListaPJ (void);
 int esListaVacia (ListaPJ L);
-void insertarPJ (ListaPJ *L, TPersonaje personaje);
-void mostrarListaPJ (ListaPJ L);
-TPersonaje* selectorPJ (ListaPJ L, int num);
+void insertarPJ (ListaPJ *L, TPersonaje *personaje);
+void mostrarListaPJ (ListaPJ *L);
+
+nodo * selectorPJ (ListaPJ *L, int num);
+
 
 // ___________________________________________________
 //                      MAIN
@@ -64,11 +66,12 @@ int main (void) {
 	int i;
 	int cantPJs;
 	int num1, num2;
-	ListaPJ lista;
+	ListaPJ *pLista;
+	nodo *pNodo1, *pNodo2;
 
 	srand(time(NULL));
 
-	lista = crearListaPJ();
+	*pLista = crearListaPJ();
 
 	printf("Escriba la cantidad de personajes:\n");
 	scanf("%d", &cantPJs);
@@ -80,24 +83,37 @@ int main (void) {
 
 
 	for (i=0; i<cantPJs; i++) {
-		insertarPJ(&lista, cargaPJ());
+		insertarPJ(pLista, cargaPJ());
 	}
 
 
-
+	
 	printf("\nEstos son los datos y caracteristicas de los %d personajes:\n", cantPJs);
-	mostrarListaPJ(lista);
+	mostrarListaPJ(pLista);
 	
 
 
+	printf("Es lista nula? %s\n", esListaVacia(*pLista)?"si":"no");
+
 	printf("Elija su personaje:\n");
 	scanf("%d", &num1);
+	pNodo1 = selectorPJ(pLista, num1);
+
 	printf("Elija su contrincante:\n");
 	scanf("%d", &num2);
+	pNodo2 = selectorPJ(pLista, num2);
 
-	printf("PJ1 vs PJ2\n");
-	peleaPJ(selectorPJ(lista, num1), selectorPJ(lista, num2));
+	
 
+	if (pNodo1 == NULL || pNodo2 == NULL) {
+		printf("Error\n");
+	}
+	else {
+		printf("PJ1 vs PJ2\n");
+		peleaPJ(pNodo1->pj, pNodo2->pj);	
+	}
+
+	
 
 	return 0;
 }
@@ -107,7 +123,7 @@ int main (void) {
 //                   DEFINICIONES
 // ___________________________________________________
 
-TDatos* cargaDatos (void) {
+void cargaDatos (TPersonaje * personaje) {
 	TDatos *datos;
 	enum TRaza raza;
 
@@ -143,13 +159,16 @@ TDatos* cargaDatos (void) {
 	datos->edad = rand()%300;
 
 	datos->Salud = (double)100;
-	return datos;
+	
+	personaje->DatosPersonales = datos;
 }
 
-void mostrarDatos (TDatos *datos) {
+void mostrarDatos (TPersonaje * personaje) {
+
+
 
 printf("Raza: ");
-switch(datos->Raza) {
+switch(personaje->DatosPersonales->Raza) {
 		case 0: 
 			printf("%s\n", "Orco");
 			break;
@@ -169,15 +188,16 @@ switch(datos->Raza) {
 		default: printf("%s\n", "Humano");
 	}
 
-	printf("Nombre: %s\n", datos->ApellidoNombre);
-	printf("Edad: %d\n", datos->edad);
-	printf("Salud: %.2lf\n", datos->Salud);
+	printf("Nombre: %s\n", personaje->DatosPersonales->ApellidoNombre);
+	printf("Edad: %d\n", personaje->DatosPersonales->edad);
+	printf("Salud: %.2lf\n", personaje->DatosPersonales->Salud);
+
 	return;
 }
 
 
 
-TCaracteristicas* Cargar_Carac(void){
+void Cargar_Carac(TPersonaje * personaje){
 	TCaracteristicas *carac; 
 
 	carac = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
@@ -188,29 +208,34 @@ TCaracteristicas* Cargar_Carac(void){
 	carac->nivel = 1+rand()%(11-1);
 	carac->armadura = 1+rand()%(11-1);
 
-	return carac;
-}
-void Mostrar_Carac(TCaracteristicas *carac){
-	printf("Velocidad: %d\n", carac->velocidad );
-	printf("Destreza: %d\n", carac->destreza);
-	printf("Fuerza: %d\n", carac->fuerza);
-	printf("Nivel: %d\n", carac->nivel);
-	printf("Armadura: %d\n", carac->armadura);
+	personaje->Caracteristicas = carac;
+
+	return;
 }
 
-
-TPersonaje cargaPJ (void) {
-	TPersonaje pj;
-
-	pj.DatosPersonales =cargaDatos();
-	pj.Caracteristicas = Cargar_Carac();
-
-	return pj;
+void Mostrar_Carac(TPersonaje * personaje){
+	printf("Velocidad: %d\n", personaje->Caracteristicas->velocidad );
+	printf("Destreza: %d\n", personaje->Caracteristicas->destreza);
+	printf("Fuerza: %d\n", personaje->Caracteristicas->fuerza);
+	printf("Nivel: %d\n", personaje->Caracteristicas->nivel);
+	printf("Armadura: %d\n", personaje->Caracteristicas->armadura);
 }
 
-void muestraPJ (TPersonaje pj) {
-	mostrarDatos(pj.DatosPersonales);
-	Mostrar_Carac(pj.Caracteristicas);
+
+TPersonaje * cargaPJ (void) {
+	TPersonaje * personaje;
+
+	personaje = (TPersonaje *) malloc(sizeof(TPersonaje));
+
+	cargaDatos(personaje);
+	Cargar_Carac(personaje);
+
+	return personaje;
+}
+
+void muestraPJ (TPersonaje * personaje) {
+	mostrarDatos(personaje);
+	Mostrar_Carac(personaje);
 	return;
 }
 
@@ -301,7 +326,7 @@ int esListaVacia (ListaPJ L){
 	return (L == NULL);
 }
 
-void insertarPJ (ListaPJ *L, TPersonaje personaje){
+void insertarPJ (ListaPJ *L, TPersonaje * personaje){
 	//Inserta un nuevo nodo al principio de la lista con el valor ingresado
 	nodo *nuevo;
 
@@ -314,33 +339,36 @@ void insertarPJ (ListaPJ *L, TPersonaje personaje){
 	return;
 }
 
-void mostrarListaPJ (ListaPJ L) {
+void mostrarListaPJ (ListaPJ *L) {
 	//Muestra los elementos de la lista
 	int i = 0;
+	ListaPJ Laux = *L;
 
-	if (esListaVacia(L)) {
+	if (esListaVacia(*L)) {
 		printf("(Sin personajes)");
 	}
 	else{
-		while (esListaVacia(L) != 1) {
+		while (esListaVacia(*L) != 1) {
 			printf("Personaje #%d\n", i+1);
-			muestraPJ(L->pj);
+			muestraPJ((*L)->pj);
 			printf("\n");
-			L = L->siguiente;
+			*L = (*L)->siguiente;
 			i++;
 		}
+		*L = Laux;
 	}
 
 	return;
 }
 
 
-TPersonaje* selectorPJ (ListaPJ L, int num) {
+nodo * selectorPJ (ListaPJ *L, int num) {
+	//Retorna el nodo buscado. Si no se encuentra, retorna NULL
 	int i=0;
-	ListaPJ Laux = L;
+	ListaPJ Laux = *L;
 	while (i<num-1 && Laux != NULL) {
 		Laux = Laux->siguiente;
 		i++;
 	}
-	return &(Laux->pj);
+	return Laux;
 }
