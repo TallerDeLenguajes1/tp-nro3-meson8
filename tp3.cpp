@@ -4,8 +4,8 @@
 #include <time.h>
 
 enum TRaza{Orco, Humano, Mago, Enano, Elfo};
-char Nombres[6][10]={"jorgito", "b", "c", "d", "e", "Olaf"};
-char Apellidos[6][10]={"f", "g", "hormiga", "i", "j"};
+char Nombres[6][10]={"Jorgito", "Drachill", "Turek", "Marator", "Burkeg", "Olaf"};
+char Apellidos[6][10]={"Satanrker", "Fireyd", "Black", "White", "Fraser", "Betrayyer"};
 
 typedef struct TDatos {
 	TRaza Raza; //nota 1
@@ -61,76 +61,49 @@ void mostrarListaPJ (ListaPJ *L);
 nodo * buscarPJ (ListaPJ *L, int num);
 void eliminarPrimero (ListaPJ *Lista);
 void eliminarX (ListaPJ *Lista, int id_buscado);
+int tamanioLista (ListaPJ *Lista);
+void campeonato (ListaPJ *Lista);
+void upgrade (TPersonaje *personaje);
 
 // ______________________________________________________________________________________________________
 
 int main (void) {
-	int i;
-	int cantPJs;
-	int num1, num2;
+	int i, error, cantPJs;
 	ListaPJ *Lista;
 	TPersonaje * nuevoPJ;
-	nodo *pNodo1, *pNodo2;
-	int resultado;
-
 	srand(time(NULL));
+
 
 	crearListaPJ(Lista);
 
-	printf("Escriba la cantidad de personajes:\n");
-	scanf("%d", &cantPJs);
+	error = 0;
+	do {
+		if (error != 0) {
+			if (cantPJs == 1) {
+				printf("Error. Por favor elija un valor mayor 1\n");
+			}
+			else {
+				printf("Error. Por favor elija un valor positivo\n");	
+			}
+		}
 
-	if (cantPJs < 0) {
-		printf("Error. Eligio una cantidad negativa\n");
-		return 1;
-	}
+		printf("Escriba la cantidad de personajes:\n");
+		scanf("%d", &cantPJs);
+
+		if (cantPJs <= 1) {
+			error = 1;
+		}
+		else {
+			error = 0;
+		}
+	} while (error != 0);
 
 	for (i=0; i<cantPJs; i++) {
 		creaPJ(&nuevoPJ);
 		insertarPJfin(Lista, nuevoPJ);
-	}
-	
-	printf("\nEstos son los datos y caracteristicas de los %d personajes:\n\n", cantPJs);
-	mostrarListaPJ(Lista);
-	/*
-	//Eliminar el tercero en la lista (prueba de funcion eliminarX())
+	}	
 
-	printf("Eliminando el tercero\n");
-	eliminarX(Lista, 3);
-	printf("\n");
-	mostrarListaPJ(Lista);
-	*/
-	printf("Elija su personaje:\n");
-	scanf("%d", &num1);
-	pNodo1 = buscarPJ(Lista, num1);
-	if (pNodo1 == NULL) {
-		printf("Error, el personaje no existe en la lista\n");
-		return 1;
-	}
-
-	printf("Elija su contrincante:\n");
-	scanf("%d", &num2);
-	pNodo2 = buscarPJ(Lista, num2);	
-	if (pNodo2 == NULL) {
-		printf("Error, el personaje no existe en la lista\n");
-		return 1;
-	}
-	
-	resultado = peleaPJ(pNodo1->pj, pNodo2->pj);
-
-	if (resultado == 1) {
-		printf("Ha ganado %s\n", pNodo1->pj->DatosPersonales->ApellidoNombre);
-		eliminarX(Lista, num2);
-	}
-	else if (resultado == 2) {
-		printf("Ha ganado %s\n", pNodo2->pj->DatosPersonales->ApellidoNombre);
-		eliminarX(Lista, num1);
-	}
-	else {
-		printf("Hubo empate\n");
-	}
-
-	//mostrarListaPJ(Lista);
+	campeonato(Lista);
 
 	return 0;
 }
@@ -167,11 +140,12 @@ void cargaDatos (TPersonaje * personaje) {
 	datos->Raza = raza;
 
 
-	datos->ApellidoNombre = (char *) malloc (10);
+	datos->ApellidoNombre = (char *) malloc (22);
 
 	strcpy((datos->ApellidoNombre), Nombres[rand()%6]);
-
-	datos->edad = rand()%300;
+	strcat(datos->ApellidoNombre, " ");
+	strcat(datos->ApellidoNombre, Apellidos[rand()%6]);
+	datos->edad = 1 + rand()%300;
 
 	datos->Salud = (double)100;
 	
@@ -213,11 +187,11 @@ void cargarCarac(TPersonaje * personaje){
 
 	carac = (TCaracteristicas*)malloc(sizeof(TCaracteristicas));
 
-	carac->velocidad = 1+rand()%(11-1);
-	carac->destreza = 1+rand()%(6-1);
-	carac->fuerza = 1+rand()%(11-1);
-	carac->nivel = 1+rand()%(11-1);
-	carac->armadura = 1+rand()%(11-1);
+	carac->velocidad = 1 + rand()%10;
+	carac->destreza = 1 + rand()%(5);
+	carac->fuerza = 1 + rand()%(10);
+	carac->nivel = 1 + rand()%(10);
+	carac->armadura = 1 + rand()%(10);
 
 	personaje->Caracteristicas = carac;
 
@@ -314,12 +288,6 @@ int peleaPJ(TPersonaje *p1, TPersonaje *p2) {
 		printf("\n");
 	}
 	printf("---------------------------------\n");
-
-
-	//Al finalizar el combate muestra la salud de cada uno
-	printf("Fin del combate\n");
-	printf("Salud de %s: %.2lf\n", p1->DatosPersonales->ApellidoNombre, p1->DatosPersonales->Salud);
-	printf("Salud de %s: %.2lf\n", p2->DatosPersonales->ApellidoNombre, p2->DatosPersonales->Salud);
 
 	if (p1->DatosPersonales->Salud > p2->DatosPersonales->Salud) {
 		//Gana el primer personaje
@@ -487,4 +455,123 @@ void eliminarX (ListaPJ *Lista, int id_buscado) {
 
 	}
 
+}
+
+int tamanioLista (ListaPJ *Lista) {
+	int tama = 0;
+	nodo * p_aux = Lista->head;
+
+	while (p_aux != NULL) {
+		tama++;
+		p_aux= p_aux->siguiente;
+	}
+	return tama;
+}
+
+void campeonato (ListaPJ *Lista) {
+	int num1, num2, resultado, ronda;
+	nodo *pNodo1, *pNodo2;
+	int error = 0;
+
+	printf("CAMPEONATO\n");
+
+	ronda = 1;
+	while (tamanioLista(Lista) > 1){
+		printf("\nPersonajes disponibles: \n");
+		mostrarListaPJ(Lista);
+
+		do {
+			if (error != 0) {
+				printf("El personaje no existe en lista\n");
+			}
+
+			printf("\nElija su personaje:\n");
+			scanf("%d", &num1);
+			pNodo1 = buscarPJ(Lista, num1);
+
+			if (pNodo1 == NULL) {
+				error = 1;
+			}
+			else {
+				error = 0;
+			}
+
+		} while (error != 0);
+
+
+		do {
+			if (error != 0) {
+				printf("El personaje no existe en lista\n");
+			}
+
+			printf("Elija su contrincante:\n");
+			scanf("%d", &num2);
+			pNodo2 = buscarPJ(Lista, num2);	
+
+			if (pNodo2 == NULL) {
+				error = 1;
+			}
+			else {
+				error = 0;
+			}
+
+		} while (error != 0);
+
+		
+		resultado = peleaPJ(pNodo1->pj, pNodo2->pj);
+
+		printf("Resultado de la ronda %d\n", ronda);
+		printf("Salud de %s: %.2lf\n", pNodo1->pj->DatosPersonales->ApellidoNombre, pNodo1->pj->DatosPersonales->Salud);
+		printf("Salud de %s: %.2lf\n", pNodo2->pj->DatosPersonales->ApellidoNombre, pNodo2->pj->DatosPersonales->Salud);
+
+		if (resultado == 1) {
+			printf("Ha ganado %s!\n", pNodo1->pj->DatosPersonales->ApellidoNombre);
+			printf("%s queda fuera del campeonato\n", pNodo2->pj->DatosPersonales->ApellidoNombre);
+			eliminarX(Lista, num2);
+			upgrade(pNodo1->pj);
+		}
+		else if (resultado == 2) {
+			printf("Ha ganado %s!\n", pNodo2->pj->DatosPersonales->ApellidoNombre);
+			printf("%s queda fuera del campeonato\n", pNodo1->pj->DatosPersonales->ApellidoNombre);
+			eliminarX(Lista, num1);
+			upgrade(pNodo2->pj);
+		}
+		else {
+			printf("Hubo empate!\n");
+			upgrade(pNodo1->pj);
+			upgrade(pNodo2->pj);
+		}
+		ronda++;
+	}
+
+	if (resultado == 1){
+		printf("\nGANADOR DEL CAMPEONATO: %s\n", pNodo1->pj->DatosPersonales->ApellidoNombre);
+	}
+	else {
+		printf("\nGANADOR DEL CAMPEONATO: %s\n", pNodo2->pj->DatosPersonales->ApellidoNombre);
+	}
+
+}
+
+void upgrade (TPersonaje *personaje) {
+	//Incrementa un stat aleatorio
+	int random = rand()%5;
+
+	switch (random) {
+		case 0:
+			personaje->Caracteristicas->velocidad++;
+			break;
+		case 1:
+			personaje->Caracteristicas->destreza++;
+			break;
+		case 2:
+			personaje->Caracteristicas->fuerza++;
+			break;
+		case 3:
+			personaje->Caracteristicas->nivel++;
+			break;
+		case 4:
+			personaje->Caracteristicas->armadura++;
+			break;
+	}
 }
