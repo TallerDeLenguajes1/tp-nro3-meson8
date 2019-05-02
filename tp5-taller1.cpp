@@ -1,11 +1,11 @@
-//#include "listah.h"
+//#include "lista.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 enum TRaza{Orco, Humano, Mago, Enano, Elfo};
-char Nombres[6][10]={"Jorgito", "Borimir", "Conan", "Druid", "Elvish", "Olaf"};
+char Nombres[6][10]={"Jorgito", "Borimir", "Conan", "Ancalagon", "Kreindor", "Olaf"};
 char Apellidos[6][10]={"Jubilus", "Gomez", "Heckles", "Imir", "Juniper"};
 
 typedef struct TDatos {
@@ -40,49 +40,61 @@ typedef struct Nodo{
 TDatos *cargaDatos ();
 void mostrarDatos (TDatos datos);
 TCaracteristicas *cargarCarac();
-void pelea(TPersonaje  pj1, TPersonaje  pj2);
+TPersonaje pelea(TPersonaje  pj1, TPersonaje  pj2,Nodo *Start);
 void Mostrar_Carac(TCaracteristicas carac);
 Nodo *CargarLista(Nodo *Start);
-TPersonaje seleccionar(Nodo *Start, int n);
-void mostrar(TPersonaje personaje);
+Nodo  *seleccionar(Nodo *Start, int n);
+//void mostrar(TPersonaje personaje);
+//void mostrar(Nodo Start, int idpersonaje);
+//------------------Funciones el tp5
+void EliminarNodo(Nodo * nodo);
+void InsertarNodo(Nodo * Start , int valor);
+void InsertarAlFinal(Nodo * Start, Nodo * Nodo);
+void QuitarNodoDeUnaPosicion(Nodo * Start, int posicion);
+Nodo * CrearNodo(int valor);
+//--------------------
+
 int main(){
 	int n;
 	srand(time(NULL));TDatos pj1;
-
-	printf("Ingrese el numero de peleadores:\n");
-	scanf("%d", &n);
-
 	Nodo *Start =NULL;
 
 
-	for (int i = 0; i < n; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
 		Start=CargarLista(Start);
 		puts("--------------");
 	}
 	
+	Nodo *nodo1=seleccionar(Start, 1);
+	Nodo *nodo2=seleccionar(Start, 2);
+	Nodo *nodo3=seleccionar(Start, 3);
+	Nodo *nodo4=seleccionar(Start, 4);
+	Nodo *nodo5=seleccionar(Start, 5);
+	Nodo *nodo6=seleccionar(Start, 6);
+	Nodo *nodo7=seleccionar(Start, 7);
+	Nodo *nodo8=seleccionar(Start, 8);
+		
+	printf("---Pelea del grupo 1---\n");
+	TPersonaje grupo1=pelea(*nodo1->personaje, *nodo2->personaje, Start);
+	printf("---Pelea del grupo 2---\n");
+	TPersonaje grupo2=pelea(*nodo3->personaje, *nodo4->personaje, Start);
+	printf("---Pelea del grupo 3---\n");
+	TPersonaje grupo3=pelea(*nodo5->personaje, *nodo6->personaje, Start);
+	printf("---Pelea del grupo 4---\n");
+	TPersonaje grupo4=pelea(*nodo7->personaje, *nodo8->personaje,Start);
+	
+	//puts("Elija el personaje a quitar:");
+	//int num3;
+	//scanf("%d", &num3);
+	//QuitarNodoDeUnaPosicion( Start , num3);
+	//mostrar(seleccionar(Start, num3));
+	printf("---Semifinal---\n");
+	TPersonaje final1=pelea(grupo1, grupo2,Start);
+	TPersonaje final2=pelea(grupo3, grupo4, Start);
 
-	int num;
-	printf("Ingrese el personaje que quiere ver:");
-	scanf("%d", &num);
-	
-	mostrar(seleccionar(Start, num));
-
-	puts("Elija el primer personaje:");
-	int num1, num2;
-	scanf("%d", &num1);
-	
-	
-	puts("Elija el Segundo personaje:");
-	scanf("%d", &num2);
-	
-	
-	//if (seleccionar(Start, num1) != NULL && ) {
-	//	*(seleccionar(Start, num1)->personaje);
-
-	//}
-	
-	pelea(seleccionar(Start, num1), seleccionar(Start, num2) );
+	printf("---BATALLA FINAL---\n");
+	TPersonaje ganador=pelea(final1, final2, Start);
 
 
 
@@ -179,7 +191,7 @@ void Mostrar_Carac(TCaracteristicas carac){
 }
 
 
-void pelea(TPersonaje  pj1, TPersonaje  pj2){
+TPersonaje pelea(TPersonaje  pj1, TPersonaje  pj2, Nodo *Start){
 		
 		int i;
 		int MDP=10000;
@@ -218,11 +230,16 @@ void pelea(TPersonaje  pj1, TPersonaje  pj2){
 		}
 	if((pj2.DatosPersonales)->Salud <(pj1.DatosPersonales)->Salud){
 		printf("El ganador es %s!\n", (pj1.DatosPersonales)->ApellidoNombre);
-		
+		(pj2.DatosPersonales)->Salud=(pj2.DatosPersonales)->Salud + 12;//Bonificacion de salud
+		QuitarNodoDeUnaPosicion(Start,2 );
+		return (pj1);
 	}
 	if((pj1.DatosPersonales)->Salud < (pj2.DatosPersonales)->Salud){
 		printf("El ganador es %s!\n", (pj2.DatosPersonales)->ApellidoNombre);
-		
+		QuitarNodoDeUnaPosicion(Start, 1);
+		(pj2.DatosPersonales)->Salud=(pj2.DatosPersonales)->Salud + 12;
+
+		return (pj2);	
 	}
 	if((pj1.DatosPersonales)->Salud == (pj2.DatosPersonales)->Salud){
 		printf("Es un empate!");
@@ -259,8 +276,9 @@ Nodo *CargarLista(Nodo *Start){// los personajes
 	return Start;
    }
 
-TPersonaje seleccionar(Nodo *Start, int n){// le mandaria el contador
+Nodo *seleccionar(Nodo *Start, int n){// le mandaria el contador
 	//mostrar(*(Start->personaje));
+	//RETORNA UN PUNTERO A NODO O null SI NO EXISTE
 
 	while(Start->id != n && Start != NULL)
 	{
@@ -269,15 +287,80 @@ TPersonaje seleccionar(Nodo *Start, int n){// le mandaria el contador
 	}
 	if(Start ==NULL){
 		printf("No se pudo encontrar personaje");
-
 	}
-	return *Start->personaje;
+	return Start;
   }
-
+/*
 void mostrar(TPersonaje personaje){
-	
+	mostrarDatos(*(personaje.DatosPersonales));
+	Mostrar_Carac(*(personaje.Caracteristicas));
+}*/
+/*
+void mostrar(Nodo Start, int idpersonaje){
+
+	while(Start->id != n && Start != NULL)
+	{
+		Start= Start->siguiente;
+		//mostrar(*(Start->personaje));
+	}
 	mostrarDatos(*(personaje.DatosPersonales));
 	Mostrar_Carac(*(personaje.Caracteristicas));
 
 
+}*/
+void EliminarNodo(Nodo * nodo){
+    if (!nodo) free(nodo);
+    printf("Se elimino un nodo exitosamente");
 }
+
+
+
+void InsertarNodo(Nodo * Start , int valor){
+    Nodo * NuevoNodo = CrearNodo(valor);
+    NuevoNodo -> siguiente = Start;
+    Start  = NuevoNodo ;
+    printf("Se inserto un nodo al principio exitosamente");
+}
+
+/*
+void InsertarAlFinal(Nodo * Start, Nodo * Nodo){
+    Nodo * NuevoNodo = CrearNodo(valor);
+    Nodo * Aux = Start;
+    while(Aux->siguiente) 
+    {
+	Aux = Aux -> siguiente;
+    } 
+    NuevoNodo -> siguiente = Start;
+    Start  = NuevoNodo ;
+}
+*/
+void QuitarNodoDeUnaPosicion(Nodo * Start, int posicion){
+	int contador = 0;
+	Nodo * Aux = Start;
+	Nodo * Anterior; 
+    	while( contador < posicion  && Aux) 
+    	{
+		Anterior = Aux;
+		Aux = Aux -> siguiente;
+		contador++;
+    	}
+
+   	 if(!Aux)
+    	{
+    	Anterior -> siguiente = Aux -> siguiente;	  
+		EliminarNodo(Aux);
+    
+    	}
+	printf("Se elimino un nodo intermedio exitosamente\n");
+}
+
+
+Nodo * CrearNodo(int valor){
+	Nodo *NNodo= (Nodo *) malloc (sizeof(Nodo));
+	NNodo->id = rand() % 99;
+	NNodo->siguiente = NULL;
+	printf("Se creo un nodo exitosamente" );
+	return NNodo;
+}
+
+
